@@ -1,0 +1,22 @@
+# IDE and build system files
+.vs/
+out/
+
+# Git related
+.git/
+
+# Compiled files
+*.o
+*.out
+*.exe
+
+# CMake build directories
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# System files
+.DS_Store
+Thumbs.db
