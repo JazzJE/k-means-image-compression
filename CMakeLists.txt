@@ -10,18 +10,23 @@ find_package(wxWidgets CONFIG REQUIRED)
 
 # Source files
 set(SOURCES
-    
     src/KClusterAlgorithm.cpp
     src/Cluster.cpp
-    
- "src/MainFrame.cpp" "src/App.cpp")
+    src/Frames/MainFrame.cpp 
+    src/App.cpp 
+    "src/Frames/CompressMultipleFrame.cpp" 
+    "src/Frames/CompressSingleFrame.cpp"
+ "src/Frames/BaseCompressFrame.cpp")
 
 # Header files (for IDE organization)
 set(HEADERS
     include/KClusterAlgorithm.h
     include/Constants.h
-    
- "include/MainFrame.h" "include/App.h")
+    include/Frames/MainFrame.h 
+    include/App.h 
+    "include/Frames/CompressMultipleFrame.h" 
+    "include/Frames/CompressSingleFrame.h"
+ "include/Frames/BaseCompressFrame.h")
 
 # For relative access
 add_compile_definitions(PROJECT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
