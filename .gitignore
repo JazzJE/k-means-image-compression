@@ -14,6 +14,7 @@ lib/
 *.user
 *.userosscache
 *.sln.docstates
+CMakeSettings.json
 
 # Visual Studio Code
 .vscode/
