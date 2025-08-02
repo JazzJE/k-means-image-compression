@@ -11,7 +11,7 @@ find_package(wxWidgets CONFIG REQUIRED)
 # Source files
 set(SOURCES
     src/KClusterAlgorithm.cpp
-    src/Cluster.cpp
+    
     src/Frames/MainFrame.cpp 
     src/App.cpp 
     "src/Frames/CompressMultipleFrame.cpp" 

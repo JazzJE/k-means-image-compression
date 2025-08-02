@@ -8,6 +8,10 @@
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 {
 
+    wxPanel* title_panel = new wxPanel(this);
+
+    wxStaticText* title_text = new wxStaticText(title_panel, wxID_ANY, "K-Means Clustering Compression Program");
+
     wxPanel* button_panel = new wxPanel(this);
 
     // create the two button options

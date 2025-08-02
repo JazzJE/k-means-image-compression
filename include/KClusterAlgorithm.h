@@ -1,31 +1,27 @@
+#include <cstdint>
+#include "Constants.h"
+
 class KClusterAlgorithm
 {
 private:
 	
-	const int number_of_color_channels;
+	const inline static uint8_t number_of_features = Constants::number_of_color_channels;
 
-	class Cluster
-	{
-	private:
+	uint8_t current_number_of_clusters;
+	uint8_t** cluster_positions;
 
-		const int number_of_color_channels;
-		double* const position;
+	uint32_t saved_number_of_samples;
+	uint8_t* associated_cluster_indices;
 
-	public:
-
-		Cluster(int number_of_color_channels);
-		~Cluster();
-	};
-
-	int current_number_of_clusters;
-	Cluster* clusters;
-
+	void deallocate_clusters();
+	void reallocate_clusters();
 
 public:
 
 	KClusterAlgorithm();
 	~KClusterAlgorithm();
 
-	// use these to update the k-means algorithm to 
+	// cluster the data samples and return the data samples 
+	uint8_t** cluster_data_samples(uint8_t** data_samples, uint32_t number_of_samples, uint8_t new_number_of_clusters);
 
 };
