@@ -10,7 +10,7 @@ private:
 	uint8_t current_number_of_clusters;
 	uint8_t* cluster_positions;
 
-	uint32_t saved_number_of_pixels;
+	uint32_t current_number_of_pixels;
 	uint8_t* associated_cluster_indices;
 
 	void initialize_clusters(uint8_t* image_data);
