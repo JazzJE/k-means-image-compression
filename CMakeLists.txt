@@ -34,6 +34,48 @@ endif()
 message(STATUS "STB library successfully downloaded and configured")
 message(STATUS "STB location: ${stb_SOURCE_DIR}")
 
+# Download and setup OpenMP library (REQUIRED)
+message(STATUS "Setting up OpenMP...")
+
+find_package(OpenMP QUIET)
+
+if(NOT OpenMP_FOUND OR NOT OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP not found, attempting to download and build LLVM OpenMP...")
+    
+    # Download LLVM OpenMP runtime
+    FetchContent_Declare(
+        openmp
+        GIT_REPOSITORY https://github.com/llvm/llvm-project.git
+        GIT_TAG llvmorg-17.0.6  # Use stable version
+        GIT_SHALLOW TRUE
+        SOURCE_SUBDIR openmp
+    )
+    
+    # OpenMP build options
+    set(OPENMP_ENABLE_LIBOMPTARGET OFF CACHE BOOL "Enable OpenMP target offloading")
+    set(OPENMP_ENABLE_LIBOMP_PROFILING OFF CACHE BOOL "Enable OpenMP profiling")
+    set(OPENMP_STANDALONE_BUILD ON CACHE BOOL "OpenMP standalone build")
+    
+    # Disable tests and examples for faster build
+    set(OPENMP_ENABLE_TESTING OFF CACHE BOOL "Enable OpenMP testing")
+    set(OPENMP_ENABLE_WERROR OFF CACHE BOOL "Enable OpenMP Werror")
+    
+    FetchContent_MakeAvailable(openmp)
+    
+    # Create target alias for consistency
+    if(TARGET omp)
+        add_library(OpenMP::OpenMP_CXX ALIAS omp)
+        set(OpenMP_CXX_FOUND TRUE)
+        message(STATUS "OpenMP downloaded and built from LLVM source")
+        message(STATUS "OpenMP location: ${openmp_SOURCE_DIR}")
+    else()
+        message(FATAL_ERROR "Failed to build OpenMP from source. Please install OpenMP manually.")
+    endif()
+else()
+    message(STATUS "OpenMP found via system installation")
+    message(STATUS "OpenMP version: ${OpenMP_CXX_VERSION}")
+endif()
+
 # Download and setup wxWidgets library (REQUIRED)
 message(STATUS "Setting up wxWidgets...")
 
@@ -117,6 +159,7 @@ target_link_libraries(${PROJECT_NAME}
     wx::core 
     wx::base
     stb_lib  # STB library
+    OpenMP::OpenMP_CXX  # OpenMP library
 )
 
 # Set output directory
@@ -137,6 +180,9 @@ if(MSVC)
     # Enable parallel compilation
     target_compile_options(${PROJECT_NAME} PRIVATE /MP)
     
+    # Add OpenMP compile flag for MSVC
+    target_compile_options(${PROJECT_NAME} PRIVATE /openmp)
+    
     # Add STB files to Visual Studio solution for easy access
     target_sources(${PROJECT_NAME} PRIVATE 
         ${stb_SOURCE_DIR}/stb_image_write.h
@@ -148,6 +194,12 @@ if(MSVC)
         ${stb_SOURCE_DIR}/stb_image_write.h
         ${stb_SOURCE_DIR}/stb_image.h
     )
+endif()
+
+# GCC/Clang specific OpenMP settings
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp)
+    target_link_options(${PROJECT_NAME} PRIVATE -fopenmp)
 endif()
 
 # Platform-specific settings
@@ -168,6 +220,10 @@ message(STATUS "")
 message(STATUS "=== BUILD CONFIGURATION ===")
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "OpenMP: ${OpenMP_CXX_FOUND}")
+if(OpenMP_CXX_FOUND AND OpenMP_CXX_VERSION)
+    message(STATUS "OpenMP version: ${OpenMP_CXX_VERSION}")
+endif()
 message(STATUS "wxWidgets: ${wxWidgets_FOUND}")
 if(wxWidgets_FOUND)
     message(STATUS "wxWidgets source: vcpkg")
@@ -182,6 +238,10 @@ message(STATUS "")
 # Optional: Create a custom target to show library usage information
 add_custom_target(library_info
     COMMAND ${CMAKE_COMMAND} -E echo "=== LIBRARY USAGE INFORMATION ==="
+    COMMAND ${CMAKE_COMMAND} -E echo ""
+    COMMAND ${CMAKE_COMMAND} -E echo "OpenMP Usage in your C++ files:"
+    COMMAND ${CMAKE_COMMAND} -E echo "#include <omp.h>"
+    COMMAND ${CMAKE_COMMAND} -E echo "#pragma omp parallel for"
     COMMAND ${CMAKE_COMMAND} -E echo ""
     COMMAND ${CMAKE_COMMAND} -E echo "STB Usage in your C++ files:"
     COMMAND ${CMAKE_COMMAND} -E echo "#define STB_IMAGE_WRITE_IMPLEMENTATION"
