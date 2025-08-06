@@ -2,14 +2,14 @@
 #include <random>
 #include <omp.h>
 
-KClusterAlgorithm::KClusterAlgorithm() : cluster_positions(nullptr), associated_cluster_indices(nullptr), current_number_of_clusters(0), 
+KClusterAlgorithm::KClusterAlgorithm() : cluster_positions(nullptr), index_map(nullptr), current_number_of_clusters(0), 
 current_number_of_pixels(0)
 { }
 
 KClusterAlgorithm::~KClusterAlgorithm()
 {
 	delete[] cluster_positions;
-	delete[] associated_cluster_indices;
+	delete[] index_map;
 }
 
 void KClusterAlgorithm::cluster_data_samples(uint8_t* image_data, size_t new_number_of_pixels, uint8_t new_number_of_clusters)
@@ -17,9 +17,9 @@ void KClusterAlgorithm::cluster_data_samples(uint8_t* image_data, size_t new_num
 	// only reallocate the number of associated cluster indices if there are a different number of pixels; this is to save time
 	if (new_number_of_pixels != current_number_of_pixels)
 	{
-		delete[] associated_cluster_indices;
+		delete[] index_map;
 		current_number_of_pixels = new_number_of_pixels;
-		associated_cluster_indices = new uint8_t[current_number_of_pixels]();
+		index_map = new uint8_t[current_number_of_pixels]();
 	}
 
 	// only reallocate the clusters if there are a different number of them; again, to save time
@@ -66,7 +66,7 @@ void KClusterAlgorithm::initialize_clusters(uint8_t* image_data)
 	{
 		// for every pixel, find the shortest distance to a cluster
 		#pragma omp parallel for
-		for (size_t pixel_index = 0; pixel_index < current_number_of_pixels; pixel_index++)
+		for (int pixel_index = 0; pixel_index < current_number_of_pixels; pixel_index++)
 		{
 			shortest_distances[pixel_index] = 0;
 			size_t pixel_first_feature_index = pixel_index * number_of_features;
@@ -81,12 +81,13 @@ void KClusterAlgorithm::initialize_clusters(uint8_t* image_data)
 				shortest_distances[pixel_index] += initial_distance_component;
 			}
 
-			// for every cluster up until this new cluster
+			// for every cluster up until this new cluster, check the distance from the pixel to the cluster and if distance is smaller, 
+			// then assign that shorter distance to that index
 			for (size_t current_cluster_index = 1; current_cluster_index < processing_cluster_index; current_cluster_index++)
 			{
 				size_t current_cluster_first_feature_index = current_cluster_index * number_of_features;
 				uintmax_t new_cluster_distance = 0;
-				int64_t distance_component;
+				int64_t distance_component = 0;
 
 				for (size_t f = 0; f < number_of_features; f++)
 				{
@@ -97,7 +98,6 @@ void KClusterAlgorithm::initialize_clusters(uint8_t* image_data)
 					new_cluster_distance += distance_component;
 				}
 
-				// check the distance from the pixel to the cluster and if distance is smaller, then assign that shorter to that index
 				if (new_cluster_distance < shortest_distances[pixel_index])
 					shortest_distances[pixel_index] = new_cluster_distance;
 			}
@@ -106,12 +106,12 @@ void KClusterAlgorithm::initialize_clusters(uint8_t* image_data)
 		// sum the distances to get their total
 		double distance_total = 0;
 		#pragma omp parallel for reduction(+:distance_total)
-		for (size_t i = 0; i < current_number_of_pixels; i++)
+		for (int i = 0; i < current_number_of_pixels; i++)
 			distance_total += shortest_distances[i];
 
 		// transform the array to have the percentages using the total
 		#pragma omp parallel for
-		for (size_t i = 0; i < current_number_of_pixels; i++)
+		for (int i = 0; i < current_number_of_pixels; i++)
 			shortest_distances[i] /= distance_total;
 
 		// have a random value picked from 0 to 1, and then sum until the sum is greater than or equal to the random value
@@ -129,7 +129,7 @@ void KClusterAlgorithm::initialize_clusters(uint8_t* image_data)
 
 		size_t current_cluster_index_first_feature = processing_cluster_index * number_of_features;
 		size_t chosen_index_first_feature = chosen_index * number_of_features;
-		for (size_t f = 0; f < number_of_features; f++)
+		for (int f = 0; f < number_of_features; f++)
 			cluster_positions[current_cluster_index_first_feature + f] = image_data[chosen_index_first_feature + f];
 	}
 
@@ -143,15 +143,15 @@ bool KClusterAlgorithm::assign_associated_cluster_indices(uint8_t* image_data)
 
 	// for every pixel sample
 	#pragma omp parallel for reduction(||:clusters_switched)
-	for (size_t pixel_index = 0; pixel_index < current_number_of_pixels; pixel_index++)
+	for (int pixel_index = 0; pixel_index < current_number_of_pixels; pixel_index++)
 	{
 		size_t pixel_first_feature_index = pixel_index * number_of_features;
 
 		// for checking if the associated cluster changed for this pixel
-		size_t initial_cluster_index = associated_cluster_indices[pixel_index];
+		size_t initial_cluster_index = index_map[pixel_index];
 
 		// assume the minimum distance can be found with the first cluster
-		associated_cluster_indices[pixel_index] = 0;
+		index_map[pixel_index] = 0;
 		uintmax_t cluster_minimum_distance = 0;
 		int64_t initial_distance_component = 0;
 		for (size_t f = 0; f < number_of_features; f++)
@@ -182,12 +182,12 @@ bool KClusterAlgorithm::assign_associated_cluster_indices(uint8_t* image_data)
 			if (new_cluster_distance < cluster_minimum_distance)
 			{
 				cluster_minimum_distance = new_cluster_distance;
-				associated_cluster_indices[pixel_index] = cluster_index;
+				index_map[pixel_index] = cluster_index;
 			}
 		}
 
 		// if the new cluster index is not equal to the initial cluster index for this pixel, then the pixel switched clusters
-		if (associated_cluster_indices[pixel_index] != initial_cluster_index)
+		if (index_map[pixel_index] != initial_cluster_index)
 			clusters_switched = true;
 	}
 
@@ -204,7 +204,7 @@ void KClusterAlgorithm::reposition_clusters_to_average_location(uint8_t* image_d
 
 	for (size_t pixel_index = 0; pixel_index < current_number_of_pixels; pixel_index++)
 	{
-		size_t cluster_index = associated_cluster_indices[pixel_index];
+		size_t cluster_index = index_map[pixel_index];
 		for (size_t f = 0; f < number_of_features; f++)
 			running_totals_each_cluster[cluster_index * number_of_features + f] += image_data[pixel_index * number_of_features + f];
 		number_of_samples_each_cluster[cluster_index] += 1;
@@ -234,5 +234,5 @@ void KClusterAlgorithm::reposition_clusters_to_average_location(uint8_t* image_d
 
 uint8_t* KClusterAlgorithm::get_cluster_positions() const
 { return cluster_positions; }
-uint8_t* KClusterAlgorithm::get_associated_cluster_indices() const
-{ return associated_cluster_indices; }
+uint8_t* KClusterAlgorithm::get_index_map() const
+{ return index_map; }

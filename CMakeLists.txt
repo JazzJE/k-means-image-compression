@@ -5,35 +5,6 @@ project(k_means_cluster_image_compression)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Download and setup STB library (REQUIRED)
-include(FetchContent)
-
-message(STATUS "Downloading STB library...")
-FetchContent_Declare(
-    stb
-    GIT_REPOSITORY https://github.com/nothings/stb.git
-    GIT_TAG master
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(stb)
-
-# Create interface library for STB
-add_library(stb_lib INTERFACE)
-target_include_directories(stb_lib INTERFACE ${stb_SOURCE_DIR})
-
-# Verify STB files are available
-if(NOT EXISTS ${stb_SOURCE_DIR}/stb_image_write.h)
-    message(FATAL_ERROR "STB download failed - stb_image_write.h not found")
-endif()
-
-if(NOT EXISTS ${stb_SOURCE_DIR}/stb_image.h)
-    message(FATAL_ERROR "STB download failed - stb_image.h not found")
-endif()
-
-message(STATUS "STB library successfully downloaded and configured")
-message(STATUS "STB location: ${stb_SOURCE_DIR}")
-
 # Download and setup OpenMP library (REQUIRED)
 message(STATUS "Setting up OpenMP...")
 
@@ -128,8 +99,8 @@ set(SOURCES
     src/App.cpp 
     "src/Frames/CompressMultipleFrame.cpp" 
     "src/Frames/CompressSingleFrame.cpp"
-    "src/Frames/BaseCompressFrame.cpp"
-)
+    "src/Frames/ImageOptionFrame.cpp"
+ "src/ImageManager.cpp")
 
 # Header files (for IDE organization)
 set(HEADERS
@@ -139,8 +110,8 @@ set(HEADERS
     include/App.h 
     "include/Frames/CompressMultipleFrame.h" 
     "include/Frames/CompressSingleFrame.h"
-    "include/Frames/BaseCompressFrame.h"
-)
+    "include/Frames/ImageOptionFrame.h"
+ "include/ImageManager.h")
 
 # For relative access
 add_compile_definitions(PROJECT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
@@ -158,7 +129,6 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE 
     wx::core 
     wx::base
-    stb_lib  # STB library
     OpenMP::OpenMP_CXX  # OpenMP library
 )
 
@@ -182,18 +152,6 @@ if(MSVC)
     
     # Add OpenMP compile flag for MSVC
     target_compile_options(${PROJECT_NAME} PRIVATE /openmp)
-    
-    # Add STB files to Visual Studio solution for easy access
-    target_sources(${PROJECT_NAME} PRIVATE 
-        ${stb_SOURCE_DIR}/stb_image_write.h
-        ${stb_SOURCE_DIR}/stb_image.h
-    )
-    
-    # Group STB files in Visual Studio
-    source_group("External\\STB" FILES 
-        ${stb_SOURCE_DIR}/stb_image_write.h
-        ${stb_SOURCE_DIR}/stb_image.h
-    )
 endif()
 
 # GCC/Clang specific OpenMP settings
@@ -230,7 +188,6 @@ if(wxWidgets_FOUND)
 else()
     message(STATUS "wxWidgets source: Downloaded from GitHub")
 endif()
-message(STATUS "STB directory: ${stb_SOURCE_DIR}")
 message(STATUS "Output directory: ${CMAKE_BINARY_DIR}/bin")
 message(STATUS "===========================")
 message(STATUS "")
@@ -242,13 +199,6 @@ add_custom_target(library_info
     COMMAND ${CMAKE_COMMAND} -E echo "OpenMP Usage in your C++ files:"
     COMMAND ${CMAKE_COMMAND} -E echo "#include <omp.h>"
     COMMAND ${CMAKE_COMMAND} -E echo "#pragma omp parallel for"
-    COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "STB Usage in your C++ files:"
-    COMMAND ${CMAKE_COMMAND} -E echo "#define STB_IMAGE_WRITE_IMPLEMENTATION"
-    COMMAND ${CMAKE_COMMAND} -E echo "#include \"stb_image_write.h\""
-    COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "#define STB_IMAGE_IMPLEMENTATION" 
-    COMMAND ${CMAKE_COMMAND} -E echo "#include \"stb_image.h\""
     COMMAND ${CMAKE_COMMAND} -E echo ""
     COMMAND ${CMAKE_COMMAND} -E echo "wxWidgets Usage:"
     COMMAND ${CMAKE_COMMAND} -E echo "#include <wx/wx.h>"

@@ -11,7 +11,7 @@ private:
 	uint8_t* cluster_positions;
 
 	size_t current_number_of_pixels;
-	uint8_t* associated_cluster_indices;
+	uint8_t* index_map;
 
 	void initialize_clusters(uint8_t* image_data);
 	bool assign_associated_cluster_indices(uint8_t* image_data);
@@ -26,5 +26,5 @@ public:
 	void cluster_data_samples(uint8_t* image_data, size_t new_number_of_pixels, uint8_t new_number_of_clusters);
 
 	uint8_t* get_cluster_positions() const;
-	uint8_t* get_associated_cluster_indices() const;
+	uint8_t* get_index_map() const;
 };

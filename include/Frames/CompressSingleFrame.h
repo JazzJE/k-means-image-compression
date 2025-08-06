@@ -1,8 +1,8 @@
 #pragma once
 #include <wx/wx.h>
-#include "BaseCompressFrame.h"
+#include "Frames/ImageOptionFrame.h"
 
-class CompressSingleFrame : public BaseCompressFrame
+class CompressSingleFrame : public ImageOptionFrame
 {
 public:
 

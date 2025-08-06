@@ -1,12 +1,12 @@
 #pragma once
 #include <wx/wx.h>
-#include "BaseCompressFrame.h"
+#include "Frames/ImageOptionFrame.h"
 
-class CompressMultipleFrame : public BaseCompressFrame
+class CompressMultipleFrame : public ImageOptionFrame
 {
 public:
 
 	CompressMultipleFrame(const wxString& title);
 
-	bool OnInit();
+	bool OnInit() override;
 };

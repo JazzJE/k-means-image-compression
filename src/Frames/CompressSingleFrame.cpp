@@ -1,6 +1,6 @@
 #include "Frames/CompressSingleFrame.h"
 
-CompressSingleFrame::CompressSingleFrame(const wxString& title) : BaseCompressFrame(title)
+CompressSingleFrame::CompressSingleFrame(const wxString& title) : ImageOptionFrame(title)
 { }
 
 bool CompressSingleFrame::OnInit()
