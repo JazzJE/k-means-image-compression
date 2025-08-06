@@ -13,7 +13,6 @@ bool App::OnInit()
 	
 	// create the main option menu
 	MainFrame* mainFrame = new MainFrame("K-Clustering Algorithm");
-	mainFrame->SetClientSize(Constants::screen_width, Constants::screen_height);
 	mainFrame->Center();
 	mainFrame->Show();
 

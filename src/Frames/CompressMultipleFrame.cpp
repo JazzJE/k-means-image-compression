@@ -2,10 +2,3 @@
 
 CompressMultipleFrame::CompressMultipleFrame(const wxString& title) : ImageOptionFrame(title)
 { }
-
-bool CompressMultipleFrame::OnInit()
-{
-	wxPanel* panel = new wxPanel();
-
-	return true;
-}

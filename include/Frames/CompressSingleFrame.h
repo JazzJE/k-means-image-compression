@@ -8,5 +8,4 @@ public:
 
 	CompressSingleFrame(const wxString& title);
 
-	bool OnInit();
 };

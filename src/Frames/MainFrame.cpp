@@ -1,67 +1,101 @@
 #include "Frames/MainFrame.h"
 #include "Frames/CompressMultipleFrame.h"
 #include "Frames/CompressSingleFrame.h"
+#include "Frames/DisplayImageFrame.h"
 #include "Constants.h"
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 {
-    /*
-
     wxPanel* title_panel = new wxPanel(this);
-
     wxStaticText* title_text = new wxStaticText(title_panel, wxID_ANY, "K-Means Clustering Compression Program");
-    */
+    wxStaticText* subtitle_text = new wxStaticText(title_panel, wxID_ANY, "A Project Made By JazzJE");
+
+    // Make title text larger and bold
+    wxFont titleFont = title_text->GetFont();
+    titleFont.SetPointSize(titleFont.GetPointSize() + 4);
+    titleFont.SetWeight(wxFONTWEIGHT_BOLD);
+    title_text->SetFont(titleFont);
+
+    // Make subtitle smaller and italic
+    wxFont subtitleFont = subtitle_text->GetFont();
+    subtitleFont.SetPointSize(subtitleFont.GetPointSize() - 1);
+    subtitleFont.SetStyle(wxFONTSTYLE_ITALIC);
+    subtitle_text->SetFont(subtitleFont);
+
     wxPanel* button_panel = new wxPanel(this);
 
-    // create the three button options
-    wxButton* single_images_button = new wxButton(button_panel, wxID_ANY, "Compress Singular Image", wxPoint(100, 50));
-    wxButton* multiple_images_button = new wxButton(button_panel, wxID_ANY, "Compress Multiple Images", wxPoint(100, 100));
-    wxButton* display_image_button = new wxButton(button_panel, wxID_ANY, "Display .dat Image File", wxPoint(300, 50));
+    // Create buttons with better sizing
+    wxSize buttonSize(250, 45);
+    wxButton* single_images_button = new wxButton(button_panel, wxID_ANY, "Compress Singular Image",
+        wxDefaultPosition, buttonSize);
+    wxButton* multiple_images_button = new wxButton(button_panel, wxID_ANY, "Compress Multiple Images",
+        wxDefaultPosition, buttonSize);
+    wxButton* display_image_button = new wxButton(button_panel, wxID_ANY, "Display .dat Image File",
+        wxDefaultPosition, buttonSize);
 
+    // Bind events
     single_images_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::compress_single_image, this);
     multiple_images_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::compress_multiple_images, this);
     display_image_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::display_image, this);
 
-	/*
-	wxButton* button = new wxButton(panel, wxID_ANY, "Button", wxPoint(150, 50), wxSize(100, 35));
+    // Title panel layout with both title and subtitle
+    wxBoxSizer* title_sizer = new wxBoxSizer(wxVERTICAL);
+    title_sizer->AddSpacer(15);
+    title_sizer->Add(title_text, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 20);
+    title_sizer->Add(subtitle_text, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP, 5);
+    title_sizer->AddSpacer(15);
+    title_panel->SetSizer(title_sizer);
 
-	wxStaticText* text = new wxStaticText(panel, wxID_ANY, "StaticText - NOT editable", wxPoint(120, 150));
+    // Button panel layout
+    wxBoxSizer* button_sizer = new wxBoxSizer(wxVERTICAL);
+    button_sizer->AddSpacer(20);
+    button_sizer->Add(single_images_button, 0, wxALIGN_CENTER | wxALL, 8);
+    button_sizer->Add(multiple_images_button, 0, wxALIGN_CENTER | wxALL, 8);
+    button_sizer->Add(display_image_button, 0, wxALIGN_CENTER | wxALL, 8);
+    button_sizer->AddStretchSpacer(1);
+    button_panel->SetSizer(button_sizer);
 
-	wxGauge* loading_bar = new wxGauge(panel, wxID_ANY, 100, wxPoint(500, 255), wxSize(200, -1));
-	loading_bar->SetValue(50);
+    // Main frame layout
+    wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
+    main_sizer->Add(title_panel, 0, wxEXPAND);
+    main_sizer->Add(button_panel, 1, wxEXPAND);
+    this->SetSizer(main_sizer);
 
-	wxSpinCtrl spin_ctrl = new wxSpinCtrl(panel, wxID_ANY, "", wxPoint(550, 375), wxSize(100, -1));
-	*/
+    // Set minimum frame size (keeps your minimum size requirement)
+    this->SetMinSize(wxSize(Constants::min_screen_width, Constants::min_screen_height));
+
+    // Make the window take up the entire screen in windowed mode
+    this->Maximize(true);  // Maximizes the window to fill the screen
 }
 
 void MainFrame::compress_single_image(wxCommandEvent& /*event*/)
 {
     wxString title = "Compress Single Image";
     current_frame = new CompressSingleFrame(title);
-    config_current_frame();
+    default_configs_for_current_frame();
 }
 
 void MainFrame::compress_multiple_images(wxCommandEvent& /*event*/)
 {
     wxString title = "Compress Multiple Images";
     current_frame = new CompressMultipleFrame(title);
-    config_current_frame();
+    default_configs_for_current_frame();
 }
 
 void MainFrame::display_image(wxCommandEvent& /*event*/)
 {
     wxString title = "Display .dat Image";
-    current_frame = new CompressMultipleFrame(title);
-    config_current_frame();
+    current_frame = new DisplayImageFrame(title);
+    default_configs_for_current_frame();
 }
 
 // edit the current frame to have these specific display options
-void MainFrame::config_current_frame()
+void MainFrame::default_configs_for_current_frame()
 {
     this->Show(false);
-    current_frame->SetClientSize(Constants::screen_width, Constants::screen_height);
+    current_frame->Maximize(true);
     current_frame->Center();
     current_frame->Show();
     current_frame->Raise();
@@ -76,6 +110,7 @@ void MainFrame::OnCompressFrameClose(wxCloseEvent& event)
     current_frame = nullptr;
     event.Skip();
 
+    this->Center();
     this->Show();
     this->Raise();
     this->SetFocus();

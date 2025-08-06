@@ -100,7 +100,7 @@ set(SOURCES
     "src/Frames/CompressMultipleFrame.cpp" 
     "src/Frames/CompressSingleFrame.cpp"
     "src/Frames/ImageOptionFrame.cpp"
- "src/ImageManager.cpp")
+ "src/ImageManager.cpp" "src/Frames/DisplayImageFrame.cpp" "src/utils.cpp")
 
 # Header files (for IDE organization)
 set(HEADERS
@@ -111,7 +111,7 @@ set(HEADERS
     "include/Frames/CompressMultipleFrame.h" 
     "include/Frames/CompressSingleFrame.h"
     "include/Frames/ImageOptionFrame.h"
- "include/ImageManager.h")
+ "include/ImageManager.h" "include/Frames/DisplayImageFrame.h" "include/utils.h")
 
 # For relative access
 add_compile_definitions(PROJECT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")

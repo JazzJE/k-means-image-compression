@@ -8,5 +8,4 @@ public:
 
 	CompressMultipleFrame(const wxString& title);
 
-	bool OnInit() override;
 };

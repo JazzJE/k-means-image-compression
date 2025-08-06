@@ -6,15 +6,13 @@
 
 class ImageOptionFrame : public wxFrame
 {
-private:
+protected:
 
-	// used to save images and load them within this frame
+	// used to save images and load them within the frame
 	ImageManager img_manager;
 	
 public:
 
 	ImageOptionFrame(const wxString& title);
-	
-	virtual bool OnInit() = 0;
 
 };
