@@ -65,3 +65,6 @@ bool ImageManager::load_image_as_dat(std::filesystem::path loaded_file_path, uin
 		return false;
 	}
 }
+
+std::filesystem::path ImageManager::get_default_image_output_path()
+{ return default_image_output_path; }

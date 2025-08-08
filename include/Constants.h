@@ -1,9 +1,11 @@
 #pragma once
 #include <cstdint>
+#include <wx/wx.h>
 
 namespace Constants 
 {
 	constexpr uint8_t number_of_color_channels = 3;
-	constexpr size_t min_screen_width = 400;
-	constexpr size_t min_screen_height = 350;
+
+	const wxSize minimum_window_size(600, 425);
+	const wxSize default_button_size(300, 70);
 }

@@ -1,4 +1,4 @@
-#include "Frames/MainFrame.h"
+﻿#include "Frames/MainFrame.h"
 #include "Frames/CompressMultipleFrame.h"
 #include "Frames/CompressSingleFrame.h"
 #include "Frames/DisplayImageFrame.h"
@@ -27,13 +27,12 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
     wxPanel* button_panel = new wxPanel(this);
 
     // Create buttons with better sizing
-    wxSize buttonSize(250, 45);
     wxButton* single_images_button = new wxButton(button_panel, wxID_ANY, "Compress Singular Image",
-        wxDefaultPosition, buttonSize);
+        wxDefaultPosition, Constants::default_button_size);
     wxButton* multiple_images_button = new wxButton(button_panel, wxID_ANY, "Compress Multiple Images",
-        wxDefaultPosition, buttonSize);
+        wxDefaultPosition, Constants::default_button_size);
     wxButton* display_image_button = new wxButton(button_panel, wxID_ANY, "Display .dat Image File",
-        wxDefaultPosition, buttonSize);
+        wxDefaultPosition, Constants::default_button_size);
 
     // Bind events
     single_images_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::compress_single_image, this);
@@ -42,7 +41,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 
     // Title panel layout with both title and subtitle
     wxBoxSizer* title_sizer = new wxBoxSizer(wxVERTICAL);
-    title_sizer->AddSpacer(15);
+    title_sizer->AddSpacer(20);
     title_sizer->Add(title_text, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 20);
     title_sizer->Add(subtitle_text, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP, 5);
     title_sizer->AddSpacer(15);
@@ -64,10 +63,9 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
     this->SetSizer(main_sizer);
 
     // Set minimum frame size (keeps your minimum size requirement)
-    this->SetMinSize(wxSize(Constants::min_screen_width, Constants::min_screen_height));
+    this->SetMinSize(Constants::minimum_window_size);
 
-    // Make the window take up the entire screen in windowed mode
-    this->Maximize(true);  // Maximizes the window to fill the screen
+    this->Center();
 }
 
 void MainFrame::compress_single_image(wxCommandEvent& /*event*/)
@@ -95,7 +93,7 @@ void MainFrame::display_image(wxCommandEvent& /*event*/)
 void MainFrame::default_configs_for_current_frame()
 {
     this->Show(false);
-    current_frame->Maximize(true);
+    current_frame->SetMinSize(Constants::minimum_window_size);
     current_frame->Center();
     current_frame->Show();
     current_frame->Raise();

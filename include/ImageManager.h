@@ -19,4 +19,6 @@ public:
 	bool load_image_as_dat(std::filesystem::path loaded_file_path, uint8_t& number_of_color_channels,
 		uint8_t& number_of_clusters, uint8_t*& cluster_positions, uint16_t& width, uint16_t& height, uint8_t*& index_map);
 
+	static std::filesystem::path get_default_image_output_path();
+
 };

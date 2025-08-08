@@ -7,10 +7,6 @@ private:
 
 	wxFrame* current_frame = nullptr;
 
-public:
-
-	MainFrame(const wxString& title);
-
 	// event handlers
 	void compress_single_image(wxCommandEvent&);
 	void compress_multiple_images(wxCommandEvent&);
@@ -21,5 +17,9 @@ public:
 
 	// this is for reshowing this main frame once the option frame is closed
 	void OnCompressFrameClose(wxCloseEvent& event);
+
+public:
+
+	MainFrame(const wxString& title);
 
 };
