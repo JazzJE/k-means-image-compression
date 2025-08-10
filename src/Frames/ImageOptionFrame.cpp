@@ -3,3 +3,8 @@
 
 ImageOptionFrame::ImageOptionFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 { }
+
+wxImage* load_dat_file_image()
+{
+
+}

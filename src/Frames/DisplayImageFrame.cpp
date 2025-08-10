@@ -1,67 +1,76 @@
 #include "Frames/DisplayImageFrame.h"
 #include "utils.h"
 
-DisplayImageFrame::DisplayImageFrame(const wxString& title) : ImageOptionFrame(title), initial_image(nullptr), transformed_image(nullptr)
+DisplayImageFrame::DisplayImageFrame(const wxString& title) : ImageOptionFrame(title), displayed_image(nullptr)
 {
-    wxString file_path = select_dat_path_option();
+	generate_frame();
+}
 
-    // Check if file path is valid
-    if (file_path.IsEmpty()) {
-        wxLogError("No file selected");
-        return;
-    }
+DisplayImageFrame::~DisplayImageFrame()
+{
+    delete[] displayed_cluster_positions;
+    delete displayed_image;
+}
 
-    // Create panel
-    panel = new wxPanel(this);
+void DisplayImageFrame::generate_frame()
+{
+	reset_frame(this);
 
-    // Load image with error checking
-    initial_image = new wxImage();
-    if (!initial_image->LoadFile(file_path, wxBITMAP_TYPE_ANY)) {
-        wxLogError("Failed to load image from: %s", file_path);
-        delete initial_image;
-        initial_image = nullptr;
-        return;
-    }
+	wxPanel* button_panel = new wxPanel(this), *image_panel = new wxPanel(this);
 
-    // Verify image is valid
-    if (!initial_image->IsOk()) {
-        wxLogError("Invalid image data");
-        delete initial_image;
-        initial_image = nullptr;
-        return;
-    }
+	wxStaticBitmap* displayed_image_map;
 
-    // Create scrolled window
-    scroll_window = new wxScrolledWindow(panel, wxID_ANY);
-    scroll_window->SetScrollbars(20, 20, 50, 50);
+	if (displayed_image == nullptr)
+		displayed_image_map = new wxStaticBitmap(
+			image_panel,          // Parent window
+			wxID_ANY,             // Control ID
+			wxNullBitmap,         // Start with empty bitmap
+			wxDefaultPosition,    // Position
+			wxDefaultSize         // Size
+		);
+	else
+		displayed_image_map = new wxStaticBitmap(
+			image_panel,          // Parent window
+			wxID_ANY,             // Control ID
+			wxBitmap(*displayed_image),         // Start with empty bitmap
+			wxDefaultPosition,    // Position
+			wxDefaultSize         // Size
+		);
 
-    // Create static bitmap control
-    initial_image_display = new wxStaticBitmap(scroll_window, wxID_ANY, wxNullBitmap);
+    // Create button in button panel
+    wxButton* open_dat_file_button = new wxButton(button_panel, wxID_ANY, "Open .dat File");
 
-    // Convert image to bitmap and display
-    wxBitmap bitmap(*initial_image);
-    initial_image_display->SetBitmap(bitmap);
+    // Bind button click to handler function
+    open_dat_file_button->Bind(wxEVT_BUTTON, &DisplayImageFrame::open_dat_file_option, this);
 
-    // IMPORTANT: Set up sizers for proper layout
-
-    // Sizer for the scrolled window content
-    wxBoxSizer* scroll_sizer = new wxBoxSizer(wxVERTICAL);
-    scroll_sizer->Add(initial_image_display, 0, wxALL | wxALIGN_CENTER, 5);
-    scroll_window->SetSizer(scroll_sizer);
-
-    // Main sizer for the panel
+    // Set up sizers for layout
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
-    main_sizer->Add(scroll_window, 1, wxEXPAND | wxALL, 5);
-    panel->SetSizer(main_sizer);
+    wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* image_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    // Update scroll window virtual size
-    scroll_window->SetVirtualSize(initial_image->GetSize());
+    // Add button to button panel's sizer
+    button_sizer->Add(open_dat_file_button, 0, wxALL, 5);
+    button_panel->SetSizer(button_sizer);
 
-    // Force layout update
-    scroll_window->FitInside();
-    panel->Layout();
-    Layout(); // Don't forget the frame layout!
+    // Add the static bitmap to the image panel's sizer
+    image_sizer->Add(displayed_image_map, 1, wxEXPAND | wxALL, 5);
+    image_panel->SetSizer(image_sizer);
 
-    wxLogMessage("Image loaded successfully: %dx%d",
-        initial_image->GetWidth(), initial_image->GetHeight());
+    // Add panels to main sizer
+    main_sizer->Add(button_panel, 0, wxEXPAND);
+    main_sizer->Add(image_panel, 1, wxEXPAND);
+
+    // Set the main sizer for the frame
+    this->SetSizer(main_sizer);
+
+    // Optionally fit the frame to contents
+    this->Layout();
+    this->Fit();
+}
+
+void DisplayImageFrame::open_dat_file_option(wxCommandEvent& /*event*/)
+{
+    std::filesystem::path dat_file_path = ImageManager::select_dat_path_option().ToStdString();
+    displayed_image = ImageManager::load_dat_image_file(dat_file_path);
+
 }

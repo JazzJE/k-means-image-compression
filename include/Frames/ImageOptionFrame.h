@@ -2,14 +2,15 @@
 #include <filesystem>
 #include <string>
 #include <wx/wx.h>
+#include <wx/image.h>
 #include "ImageManager.h"
 
 class ImageOptionFrame : public wxFrame
 {
 protected:
 
-	// used to save images and load them within the frame
-	ImageManager img_manager;
+	virtual void generate_frame() = 0;
+	wxImage* load_dat_file_image();
 	
 public:
 
