@@ -11,11 +11,12 @@ class DisplayImageFrame : public ImageOptionFrame
 private:
 
 	uint8_t displayed_number_of_color_channels;
+
 	uint8_t displayed_number_of_clusters;
 	uint8_t* displayed_cluster_positions;
-	uint8_t* displayed_index_map;
-	uint16_t displayed_width;
-	uint16_t displayed_height;
+	
+	uint32_t displayed_width;
+	uint32_t displayed_height;
 
 	wxImage* displayed_image;
 

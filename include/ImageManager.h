@@ -15,6 +15,7 @@ namespace ImageManager
 
 	// used for selecting an image to load into the program
 	wxString select_image_path_option();
+	wxImage* generate_transformed_image();
 
 	// following used for loading and creating a .dat file image generated from this program
 	wxImage* load_dat_image_file(std::filesystem::path loaded_file_path, uint8_t& number_of_color_channels,
@@ -23,7 +24,6 @@ namespace ImageManager
 		uint8_t& number_of_clusters, uint8_t*& cluster_positions,  uint32_t& width, uint32_t& height, uint8_t*& index_map);
 	wxString select_dat_path_option();
 	
-
 	bool save_image_as_dat(std::string image_file_name, uint8_t number_of_color_channels, uint8_t number_of_clusters,
 		uint8_t* cluster_positions, uint32_t width, uint32_t height, uint8_t* index_map);
 };

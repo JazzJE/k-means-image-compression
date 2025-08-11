@@ -10,7 +10,6 @@ class ImageOptionFrame : public wxFrame
 protected:
 
 	virtual void generate_frame() = 0;
-	wxImage* load_dat_file_image();
 	
 public:
 

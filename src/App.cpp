@@ -15,7 +15,7 @@ bool App::OnInit()
 	wxInitAllImageHandlers();
 
 	// this will be used for storing generated .dat files
-	std::filesystem::create_directory(ImageManager::get_default_image_output_path());
+	std::filesystem::create_directory(ImageManager::default_image_output_path);
 	
 	// create the main option menu
 	MainFrame* mainFrame = new MainFrame("K-Clustering Algorithm");

@@ -1,4 +1,5 @@
 #include "ImageManager.h"
+#include "Constants.h"
 
 // given variables for an image, save the image in a specific format; return true if this was done successfully, else return false
 bool ImageManager::save_image_as_dat(std::string image_file_name, uint8_t number_of_color_channels, uint8_t number_of_clusters,
@@ -6,13 +7,13 @@ bool ImageManager::save_image_as_dat(std::string image_file_name, uint8_t number
 {
 	std::ofstream output_file(default_image_output_path / (image_file_name + ".dat"), std::ios::binary | std::ios::trunc);
 	if (!output_file.is_open())
-	{
-		output_file.close();
 		return false;
-	}
 
 	try
 	{
+		// write out a magic number to ensure that only valid .dat files are picked
+		output_file.write(reinterpret_cast<const char*>(&Constants::DAT_FILE_MAGIC_NUMBER), sizeof(uint32_t));
+
 		output_file.write(reinterpret_cast<const char*>(&number_of_color_channels), sizeof(uint8_t));
 		output_file.write(reinterpret_cast<const char*>(&number_of_clusters), sizeof(uint8_t));
 
@@ -44,19 +45,20 @@ bool ImageManager::save_image_as_dat(std::string image_file_name, uint8_t number
 wxImage* ImageManager::load_dat_image_file(std::filesystem::path loaded_file_path, uint8_t& number_of_color_channels,
 	uint8_t& number_of_clusters, uint8_t*& cluster_positions, uint32_t& width, uint32_t& height)
 {
+	// if there is memory already in the cluster positions, delete the value within it
+	if (cluster_positions)
+	{
+		delete[] cluster_positions;
+		cluster_positions = nullptr;
+	}
+
 	// the index map doesn't need to be accessed beyond being used for generating the 1d array needed for the wximage
-	uint8_t* index_map;
+	uint8_t* index_map = nullptr;
 	if (!parse_dat_file(loaded_file_path, number_of_color_channels, number_of_clusters, cluster_positions, width, height, index_map))
 	{
 		wxMessageBox("Failed to load .dat file! Please ensure that it is one generated from this program.",
 			"Error",
 			wxOK | wxICON_ERROR);
-		delete[] cluster_positions;
-		delete[] index_map;
-
-		cluster_positions = nullptr;
-		index_map = nullptr;
-
 		return nullptr;
 	}
 
@@ -69,9 +71,9 @@ wxImage* ImageManager::load_dat_image_file(std::filesystem::path loaded_file_pat
 		wxMessageBox("Failed to load .dat file! There was not enough memory in the heap.",
 			"Error",
 			wxOK | wxICON_ERROR);
+		
 		delete[] cluster_positions;
 		delete[] index_map;
-
 		cluster_positions = nullptr;
 		index_map = nullptr;
 
@@ -100,13 +102,15 @@ bool ImageManager::parse_dat_file(std::filesystem::path loaded_file_path, uint8_
 {
 	std::ifstream input_file(loaded_file_path, std::ios::binary);
 	if (!input_file.is_open())
-	{
-		input_file.close();
 		return false;
-	}
 
 	try
 	{
+		uint32_t magic_number;
+		input_file.read(reinterpret_cast<char*>(&magic_number), sizeof(uint32_t));
+		if (magic_number != Constants::DAT_FILE_MAGIC_NUMBER)
+			return false;
+
 		input_file.read(reinterpret_cast<char*>(&number_of_color_channels), sizeof(uint8_t));
 		input_file.read(reinterpret_cast<char*>(&number_of_clusters), sizeof(uint8_t));
 
@@ -124,11 +128,15 @@ bool ImageManager::parse_dat_file(std::filesystem::path loaded_file_path, uint8_
 			input_file.read(reinterpret_cast<char*>(index_map + i), sizeof(uint8_t));
 
 		input_file.close();
-
 		return true;
 	}
 	catch (...)
 	{
+		delete[] cluster_positions;
+		delete[] index_map;
+		cluster_positions = nullptr;
+		index_map = nullptr;
+
 		input_file.close();
 		return false;
 	}

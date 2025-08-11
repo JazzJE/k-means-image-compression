@@ -13,9 +13,6 @@ void reset_frame(wxFrame* frame)
     // Destroy all children
     frame->DestroyChildren();
 
-    // Recreate any permanent controls (like status bar if needed)
-    frame->CreateStatusBar();
-
     // Force refresh
     frame->Layout();
     frame->Refresh();

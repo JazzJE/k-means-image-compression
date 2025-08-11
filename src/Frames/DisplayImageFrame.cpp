@@ -1,10 +1,8 @@
 #include "Frames/DisplayImageFrame.h"
 #include "utils.h"
 
-DisplayImageFrame::DisplayImageFrame(const wxString& title) : ImageOptionFrame(title), displayed_image(nullptr)
-{
-	generate_frame();
-}
+DisplayImageFrame::DisplayImageFrame(const wxString& title) : ImageOptionFrame(title), displayed_image(nullptr), displayed_cluster_positions(nullptr)
+{ generate_frame(); }
 
 DisplayImageFrame::~DisplayImageFrame()
 {
@@ -17,25 +15,21 @@ void DisplayImageFrame::generate_frame()
 	reset_frame(this);
 
 	wxPanel* button_panel = new wxPanel(this), *image_panel = new wxPanel(this);
-
 	wxStaticBitmap* displayed_image_map;
+    wxBitmap current_bitmap = wxNullBitmap;
+    
+    // if the image object exists, then generate it as a bitmap
+    if (displayed_image != nullptr)
+        current_bitmap = wxBitmap(*displayed_image);
 
-	if (displayed_image == nullptr)
-		displayed_image_map = new wxStaticBitmap(
-			image_panel,          // Parent window
-			wxID_ANY,             // Control ID
-			wxNullBitmap,         // Start with empty bitmap
-			wxDefaultPosition,    // Position
-			wxDefaultSize         // Size
-		);
-	else
-		displayed_image_map = new wxStaticBitmap(
-			image_panel,          // Parent window
-			wxID_ANY,             // Control ID
-			wxBitmap(*displayed_image),         // Start with empty bitmap
-			wxDefaultPosition,    // Position
-			wxDefaultSize         // Size
-		);
+    displayed_image_map = new wxStaticBitmap(
+        image_panel,     
+        wxID_ANY,      
+        current_bitmap,  
+        wxDefaultPosition,  
+        wxDefaultSize         
+    );
+        
 
     // Create button in button panel
     wxButton* open_dat_file_button = new wxButton(button_panel, wxID_ANY, "Open .dat File");
@@ -49,7 +43,7 @@ void DisplayImageFrame::generate_frame()
     wxBoxSizer* image_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     // Add button to button panel's sizer
-    button_sizer->Add(open_dat_file_button, 0, wxALL, 5);
+    button_sizer->Add(open_dat_file_button, 0, wxALL | wxALIGN_CENTER, 5);
     button_panel->SetSizer(button_sizer);
 
     // Add the static bitmap to the image panel's sizer
@@ -71,6 +65,14 @@ void DisplayImageFrame::generate_frame()
 void DisplayImageFrame::open_dat_file_option(wxCommandEvent& /*event*/)
 {
     std::filesystem::path dat_file_path = ImageManager::select_dat_path_option().ToStdString();
-    displayed_image = ImageManager::load_dat_image_file(dat_file_path);
+    
+    // delete the current displayed image object if it exists
+    if (displayed_image)
+    { delete displayed_image; displayed_image = nullptr; }
 
+    if (!dat_file_path.empty())
+        displayed_image = ImageManager::load_dat_image_file(dat_file_path, displayed_number_of_color_channels, 
+            displayed_number_of_clusters, displayed_cluster_positions, displayed_width, displayed_height);
+
+    generate_frame();
 }
