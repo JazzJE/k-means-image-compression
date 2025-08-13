@@ -1,8 +1,8 @@
 #pragma once
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/filename.h>
-#include <filesystem>
+#include <wx/frame.h>
+#include <wx/spinctrl.h>
+#include <wx/event.h>
+#include <wx/string.h>
 #include <cstdint>
 #include "ImageOptionFrame.h"
 
@@ -20,7 +20,7 @@ private:
 
 	wxImage* displayed_image;
 
-	void generate_frame() override;
+	void draw_frame() override;
 
 	// method called when wanting to load a wximage to the screen
 	void open_dat_file_option(wxCommandEvent&);
@@ -28,6 +28,6 @@ private:
 public:
 
 	~DisplayImageFrame();
-	DisplayImageFrame(const wxString& title);
+	DisplayImageFrame(const wxString& title, wxFrame* main_frame);
 
 };

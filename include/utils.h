@@ -1,5 +1,6 @@
 #pragma once
 #include <wx/wx.h>
+#include <wx/image.h>
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 

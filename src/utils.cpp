@@ -17,3 +17,7 @@ void reset_frame(wxFrame* frame)
     frame->Layout();
     frame->Refresh();
 }
+
+// remove the alpha channels if the image has one
+void remove_alpha_channels(wxImage* image)
+{ if (image->HasAlpha()) image->ClearAlpha(); }

@@ -1,10 +1,17 @@
-﻿#include "Frames/MainFrame.h"
+﻿#include <wx/frame.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/font.h>
+#include <wx/event.h>
+#include <wx/string.h>
+
+#include "Frames/MainFrame.h"
 #include "Frames/CompressMultipleFrame.h"
 #include "Frames/CompressSingleFrame.h"
 #include "Frames/DisplayImageFrame.h"
 #include "Constants.h"
-#include <wx/wx.h>
-#include <wx/spinctrl.h>
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 {
@@ -70,46 +77,35 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 
 void MainFrame::compress_single_image(wxCommandEvent& /*event*/)
 {
+    this->Show(false);
     wxString title = "Compress Single Image";
-    current_frame = new CompressSingleFrame(title);
+    current_frame = new CompressSingleFrame(title, this);
     default_configs_for_current_frame();
 }
 
 void MainFrame::compress_multiple_images(wxCommandEvent& /*event*/)
 {
+    this->Show(false);
     wxString title = "Compress Multiple Images";
-    current_frame = new CompressMultipleFrame(title);
+    current_frame = new CompressMultipleFrame(title, this);
     default_configs_for_current_frame();
 }
 
 void MainFrame::display_image(wxCommandEvent& /*event*/)
 {
+    this->Show(false);
     wxString title = "Display .dat Image";
-    current_frame = new DisplayImageFrame(title);
+    current_frame = new DisplayImageFrame(title, this);
     default_configs_for_current_frame();
 }
 
 // edit the current frame to have these specific display options
 void MainFrame::default_configs_for_current_frame()
 {
-    this->Show(false);
     current_frame->SetMinSize(Constants::minimum_window_size);
+    current_frame->Maximize();
     current_frame->Center();
     current_frame->Show();
     current_frame->Raise();
     current_frame->SetFocus();
-
-    // bind the closing of the compression frame such that the main option frame reopens upon close
-    current_frame->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnCompressFrameClose, this);
-}
-
-void MainFrame::OnCompressFrameClose(wxCloseEvent& event)
-{
-    current_frame = nullptr;
-    event.Skip();
-
-    this->Center();
-    this->Show();
-    this->Raise();
-    this->SetFocus();
 }

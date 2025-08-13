@@ -1,8 +1,11 @@
+#include <filesystem>
+
+#include "ImageManager.h"
 #include "Frames/DisplayImageFrame.h"
 #include "utils.h"
 
-DisplayImageFrame::DisplayImageFrame(const wxString& title) : ImageOptionFrame(title), displayed_image(nullptr), displayed_cluster_positions(nullptr)
-{ generate_frame(); }
+DisplayImageFrame::DisplayImageFrame(const wxString& title, wxFrame* main_frame) : ImageOptionFrame(title, main_frame), displayed_image(nullptr), displayed_cluster_positions(nullptr)
+{ draw_frame(); }
 
 DisplayImageFrame::~DisplayImageFrame()
 {
@@ -10,56 +13,52 @@ DisplayImageFrame::~DisplayImageFrame()
     delete displayed_image;
 }
 
-void DisplayImageFrame::generate_frame()
+void DisplayImageFrame::draw_frame()
 {
-	reset_frame(this);
+    reset_frame(this);
+    wxPanel* button_panel = new wxPanel(this);
+    wxScrolledWindow* image_scroller = new wxScrolledWindow(this, wxID_ANY,
+        wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL);
+    image_scroller->SetScrollRate(10, 10); // scroll step in pixels
+    wxStaticBitmap* displayed_image_map;
 
-	wxPanel* button_panel = new wxPanel(this), *image_panel = new wxPanel(this);
-	wxStaticBitmap* displayed_image_map;
+    // Load the image
     wxBitmap current_bitmap = wxNullBitmap;
-    
-    // if the image object exists, then generate it as a bitmap
-    if (displayed_image != nullptr)
+    if (displayed_image)
         current_bitmap = wxBitmap(*displayed_image);
+    displayed_image_map = new wxStaticBitmap(image_scroller, wxID_ANY, current_bitmap);
 
-    displayed_image_map = new wxStaticBitmap(
-        image_panel,     
-        wxID_ANY,      
-        current_bitmap,  
-        wxDefaultPosition,  
-        wxDefaultSize         
-    );
-        
-
-    // Create button in button panel
+    // Create buttons in button panel
     wxButton* open_dat_file_button = new wxButton(button_panel, wxID_ANY, "Open .dat File");
+    wxButton* return_to_menu_button = new wxButton(button_panel, wxID_ANY, "Return to Menu");
 
-    // Bind button click to handler function
+    // Bind button click to handler functions
     open_dat_file_button->Bind(wxEVT_BUTTON, &DisplayImageFrame::open_dat_file_option, this);
+    return_to_menu_button->Bind(wxEVT_BUTTON, &DisplayImageFrame::return_to_menu_option, this);
 
     // Set up sizers for layout
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer* image_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    // Add button to button panel's sizer
-    button_sizer->Add(open_dat_file_button, 0, wxALL | wxALIGN_CENTER, 5);
+    // buttons
+    button_sizer->Add(open_dat_file_button, 0, wxALL, 5);
+    button_sizer->Add(return_to_menu_button, 0, wxALL, 5);
     button_panel->SetSizer(button_sizer);
 
-    // Add the static bitmap to the image panel's sizer
-    image_sizer->Add(displayed_image_map, 1, wxEXPAND | wxALL, 5);
-    image_panel->SetSizer(image_sizer);
+    // images
+    image_sizer->Add(displayed_image_map, 0, wxALL, 5);
+    image_scroller->SetSizer(image_sizer);
+    image_scroller->FitInside(); // makes sure scrollbars know the content size
 
-    // Add panels to main sizer
-    main_sizer->Add(button_panel, 0, wxEXPAND);
-    main_sizer->Add(image_panel, 1, wxEXPAND);
+    // layout
+    main_sizer->Add(button_panel, 0, wxEXPAND);   // buttons above
+    main_sizer->Add(image_scroller, 1, wxEXPAND); // images below
 
     // Set the main sizer for the frame
     this->SetSizer(main_sizer);
-
-    // Optionally fit the frame to contents
     this->Layout();
-    this->Fit();
+    this->Show(true);
 }
 
 void DisplayImageFrame::open_dat_file_option(wxCommandEvent& /*event*/)
@@ -74,5 +73,5 @@ void DisplayImageFrame::open_dat_file_option(wxCommandEvent& /*event*/)
         displayed_image = ImageManager::load_dat_image_file(dat_file_path, displayed_number_of_color_channels, 
             displayed_number_of_clusters, displayed_cluster_positions, displayed_width, displayed_height);
 
-    generate_frame();
+    draw_frame();
 }

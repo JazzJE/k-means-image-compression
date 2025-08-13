@@ -1,5 +1,7 @@
 #pragma once
-#include <wx/wx.h>
+#include <wx/frame.h>
+#include <wx/event.h>
+#include <wx/string.h>
 
 class MainFrame : public wxFrame
 {
@@ -14,9 +16,6 @@ private:
 
 	// edit the current frame to have certain display configs within this function
 	void default_configs_for_current_frame();
-
-	// this is for reshowing this main frame once the option frame is closed
-	void OnCompressFrameClose(wxCloseEvent& event);
 
 public:
 

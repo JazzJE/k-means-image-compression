@@ -37,6 +37,7 @@ bool ImageManager::save_image_as_dat(std::string image_file_name, uint8_t number
 	catch (...)
 	{
 		output_file.close();
+		std::filesystem::remove(default_image_output_path / (image_file_name + ".dat"));
 		return false;
 	}
 }
