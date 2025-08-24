@@ -35,11 +35,11 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
 
     // Create buttons with better sizing
     wxButton* single_images_button = new wxButton(button_panel, wxID_ANY, "Compress Singular Image",
-        wxDefaultPosition, Constants::default_button_size);
+        wxDefaultPosition, Constants::DEFAULT_BUTTON_SIZE);
     wxButton* multiple_images_button = new wxButton(button_panel, wxID_ANY, "Compress Multiple Images",
-        wxDefaultPosition, Constants::default_button_size);
+        wxDefaultPosition, Constants::DEFAULT_BUTTON_SIZE);
     wxButton* display_image_button = new wxButton(button_panel, wxID_ANY, "Display .dat Image File",
-        wxDefaultPosition, Constants::default_button_size);
+        wxDefaultPosition, Constants::DEFAULT_BUTTON_SIZE);
 
     // Bind events
     single_images_button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::compress_single_image, this);
@@ -70,7 +70,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title)
     this->SetSizer(main_sizer);
 
     // Set minimum frame size (keeps your minimum size requirement)
-    this->SetMinSize(Constants::minimum_window_size);
+    this->SetMinSize(Constants::MINIMUM_WINDOW_SIZE);
 
     this->Center();
 }
@@ -102,7 +102,7 @@ void MainFrame::display_image(wxCommandEvent& /*event*/)
 // edit the current frame to have these specific display options
 void MainFrame::default_configs_for_current_frame()
 {
-    current_frame->SetMinSize(Constants::minimum_window_size);
+    current_frame->SetMinSize(Constants::MINIMUM_WINDOW_SIZE);
     current_frame->Maximize();
     current_frame->Center();
     current_frame->Raise();

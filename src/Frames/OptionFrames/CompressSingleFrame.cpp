@@ -36,7 +36,6 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
 
 	// bind resize event to resize the images in the panel
 	this->Bind(wxEVT_SIZE, &CompressSingleFrame::OnResize, this);
-    this->Bind(wxEVT_ICONIZE, &CompressSingleFrame::OnMinimize, this);
 
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* button_sizer = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
@@ -75,15 +74,6 @@ void CompressSingleFrame::OnResize(wxSizeEvent& event)
     // else, continue the resize normally; this is so that the image doesn't flicker
     else
         image_display_panel->resize_images();
-    event.Skip();
-}
-
-// called for when the user minimizes the frame
-void CompressSingleFrame::OnMinimize(wxIconizeEvent& event)
-{
-    // resize images when restoring from minimized state
-    if (!event.IsIconized())
-       image_display_panel->resize_images();
     event.Skip();
 }
 

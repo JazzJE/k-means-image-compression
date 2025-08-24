@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include <wx/timer.h>
 #include <cstdint>
 
 #include "Frames/OptionFrames/ImageOptionFrame.h"
@@ -24,13 +25,20 @@ private:
 	wxStaticBitmap* const displayed_image_map;
 	ImageDescriptionPanel* const image_description_panel;
 
+	enum { ID_ZoomTimer = wxID_HIGHEST + 1 };
+	wxTimer* const zoom_timer;
+
 	// method called when wanting to load a wximage to the screen
 	void open_dat_file_option(wxCommandEvent&);
 
 	// method for updating the size of the displayed image when the frame is resized
+	void OnResize(wxSizeEvent&);
 
-	
 	// allow user to change the size of the image using ctrl + scroll
+	double zoom_factor = 1;
+	void OnZoomTimer(wxTimerEvent& /*event*/);
+	void resizing_displayed_image_option(wxMouseEvent& event);
+	void resize_displayed_image();
 
 	void refresh_image_maps_and_descriptions(bool clear_description = false);
 

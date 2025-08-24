@@ -5,7 +5,7 @@ class KClusterAlgorithm
 {
 private:
 	
-	const inline static uint8_t number_of_features = Constants::number_of_color_channels;
+	const inline static uint8_t number_of_features = Constants::NUMBER_OF_COLOR_CHANNELS;
 
 	uint8_t current_number_of_clusters;
 	uint8_t* cluster_positions;

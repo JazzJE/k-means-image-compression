@@ -32,7 +32,6 @@ private:
 
 	// for updating image sizes when the frame is resized or changes dimensions
 	void OnResize(wxSizeEvent&);
-	void OnMinimize(wxIconizeEvent& event);
 
 public:
 

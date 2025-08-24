@@ -71,8 +71,8 @@ void ImageDisplayPanel::resize_images()
 		double scale_y = static_cast<double>(max_image_sizes.GetHeight()) / displayed_height;
 		double scale_factor = std::min(scale_x, scale_y);
 
-		int new_image_width = static_cast<int>(std::round(displayed_width * scale_factor));
-		int new_image_height = static_cast<int>(std::round(displayed_height * scale_factor));
+		uint32_t new_image_width = static_cast<uint32_t>(std::round(displayed_width * scale_factor));
+		uint32_t new_image_height = static_cast<uint32_t>(std::round(displayed_height * scale_factor));
 
 		wxImage resized_initial_image = initial_image->Scale(new_image_width, new_image_height, wxIMAGE_QUALITY_HIGH);
 		initial_image_map->SetBitmap(wxBitmap(resized_initial_image));

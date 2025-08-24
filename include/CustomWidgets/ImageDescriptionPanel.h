@@ -25,7 +25,7 @@ public:
 
 	// the description panel will not display the colors if the cluster positions are not provided
 	ImageDescriptionPanel(wxWindow* parent, std::filesystem::path image_path = "", uint32_t image_width = 0, uint32_t image_height = 0,
-		uint8_t number_of_color_channels = Constants::number_of_color_channels, const uint8_t* cluster_positions = nullptr,
+		uint8_t number_of_color_channels = Constants::NUMBER_OF_COLOR_CHANNELS, const uint8_t* cluster_positions = nullptr,
 		uint8_t number_of_clusters = 0);
 
 	// once again, description panel will not display colors if the cluster positions are not provided
