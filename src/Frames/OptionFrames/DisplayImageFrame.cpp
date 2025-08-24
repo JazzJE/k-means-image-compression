@@ -124,10 +124,15 @@ void DisplayImageFrame::open_dat_file_option(wxCommandEvent& /*event*/)
         displayed_image = ImageManager::load_dat_file(dat_file_path, displayed_number_of_color_channels,
             compressed_number_of_clusters, compressed_cluster_positions);
 
-        refresh_image_maps_and_descriptions();
-        
-        zoom_factor = 1;
-        resize_displayed_image();
+        // only refresh everything if the displayed_image is actually generated
+        if (displayed_image)
+        {
+            current_image_path = dat_file_path;
+            refresh_image_maps_and_descriptions();
+
+            zoom_factor = 1;
+            resize_displayed_image();
+        }
     }
 }
 
@@ -165,8 +170,12 @@ void DisplayImageFrame::resizing_displayed_image_option(wxMouseEvent& event)
         // make sure the zoom_factor is in range to the limits
 		zoom_factor = std::max(Constants::IMAGE_MIN_ZOOM_FACTOR, std::min(zoom_factor, Constants::IMAGE_MAX_ZOOM_FACTOR));
         
-        zoom_timer->Stop();
-        zoom_timer->StartOnce(50);
+        // only update the image if they are at the not at the bounds
+        if (zoom_factor != Constants::IMAGE_MIN_ZOOM_FACTOR && zoom_factor != Constants::IMAGE_MAX_ZOOM_FACTOR)
+        {
+            zoom_timer->Stop();
+            zoom_timer->StartOnce(50);
+        }
     }
     else
         event.Skip();

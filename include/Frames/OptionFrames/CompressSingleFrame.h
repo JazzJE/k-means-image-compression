@@ -26,15 +26,20 @@ private:
 	ImageDisplayPanel* const image_display_panel;
 	const uint8_t* current_index_map; // this points to the index map inside of the clustering algorithm; thus, it should not be deleted here
 
+	enum { ID_ZoomTimer = wxID_HIGHEST + 1 };
+	wxTimer* const resize_timer;
+
 	void open_image_file_option(wxCommandEvent&);
 	void save_transformed_image_option(wxCommandEvent&);
 	void generate_compressed_image_option(wxCommandEvent&);
 
 	// for updating image sizes when the frame is resized or changes dimensions
 	void OnResize(wxSizeEvent&);
+	void OnResizeTimer(wxTimerEvent&);
 
 public:
 
 	CompressSingleFrame(wxFrame* main_frame, const wxString& title);
+	~CompressSingleFrame();
 
 };

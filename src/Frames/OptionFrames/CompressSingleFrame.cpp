@@ -20,7 +20,8 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
         wxString::Format("%d", 8),
         wxDefaultPosition, wxSize(80, -1), wxSP_ARROW_KEYS,
         1, 255, 8)),
-	current_index_map(nullptr)
+	current_index_map(nullptr),
+	resize_timer(new wxTimer(this, ID_ZoomTimer))
 {
     wxButton* open_image_file_button = new wxButton(button_panel, wxID_ANY, "Open Image File");
     wxButton* save_transformed_image_button = new wxButton(button_panel, wxID_ANY, "Save Transformed Image");
@@ -36,6 +37,7 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
 
 	// bind resize event to resize the images in the panel
 	this->Bind(wxEVT_SIZE, &CompressSingleFrame::OnResize, this);
+    this->Bind(wxEVT_TIMER, &CompressSingleFrame::OnResizeTimer, this, ID_ZoomTimer);
 
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* button_sizer = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
@@ -61,21 +63,31 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
     this->Show(true);
 }
 
+CompressSingleFrame::~CompressSingleFrame()
+{ if (resize_timer) delete resize_timer; }
+
 // called for when the user is resizing the frame
 void CompressSingleFrame::OnResize(wxSizeEvent& event)
 {
-    // if the user changes the state of the frame by clicking the restore window button, then resize the images
+    // if the user changes the state of the frame by clicking the restore window button, then resize the images immediately
     static bool wasMaximized = true;
     if (IsMaximized() != wasMaximized) 
     {
         wasMaximized = IsMaximized();
         CallAfter([this]() { image_display_panel->resize_images(); });
     }
-    // else, continue the resize normally; this is so that the image doesn't flicker
+	// else, continue the resize normally, but use a timer to delay the resizing until the user stops resizing the window 
+    // after a short period
     else
-        image_display_panel->resize_images();
+    {
+        resize_timer->Stop();
+        resize_timer->StartOnce(30);
+    }
     event.Skip();
 }
+
+void CompressSingleFrame::OnResizeTimer(wxTimerEvent& /*event*/)
+{ image_display_panel->resize_images(); }
 
 // prompt user to open an image file and load it into the frame
 void CompressSingleFrame::open_image_file_option(wxCommandEvent& /*event*/)
@@ -85,7 +97,6 @@ void CompressSingleFrame::open_image_file_option(wxCommandEvent& /*event*/)
     // if the new image path was valid
     if (!selected_image_path.empty())
     {
-
         wxImage* new_initial_image = new wxImage(selected_image_path.string());
         std::filesystem::path new_image_path = selected_image_path;
         ImageManager::remove_alpha_channels(new_initial_image);
