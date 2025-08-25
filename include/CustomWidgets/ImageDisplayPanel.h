@@ -23,11 +23,13 @@ private:
 	wxStaticBitmap* const initial_image_map;
 	wxStaticBitmap* const compressed_image_map;
 
+	bool use_high_quality_resizing;
+
 public:
 
 	ImageDisplayPanel(wxWindow* parent, std::filesystem::path image_path = "", uint32_t image_width = 0, uint32_t image_height = 0,
 		uint8_t number_of_color_channels = Constants::NUMBER_OF_COLOR_CHANNELS, uint8_t number_of_clusters = 0, 
-		const uint8_t* cluster_positions = nullptr);
+		const uint8_t* cluster_positions = nullptr, bool use_high_quality_resizing = true);
 	~ImageDisplayPanel();
 
 	// update the image maps with the new images
@@ -43,6 +45,7 @@ public:
 	uint8_t get_displayed_number_of_color_channels() const;
 	uint8_t get_compressed_number_of_clusters() const;
 	const uint8_t* get_compressed_cluster_positions() const;
+	bool get_use_high_quality_resizing() const;
 
 	// used to update this panel's data
 	bool set_initial_image(const wxImage* new_initial_image);
@@ -52,5 +55,6 @@ public:
 	bool set_compressed_number_of_clusters(uint8_t new_number_of_clusters);
 	bool set_compressed_cluster_positions(const uint8_t* new_cluster_positions, uint8_t new_number_of_clusters, 
 		uint8_t new_number_of_color_channels = Constants::NUMBER_OF_COLOR_CHANNELS);
+	void set_use_high_quality_resizing(bool new_use_high_quality_resizing);
 
 };

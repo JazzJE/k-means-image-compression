@@ -1,10 +1,17 @@
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <cstring>
 
 #include "CustomWidgets/ImageDisplayPanel.h"
 
+/*
+ImageDisplayPanel(wxWindow* parent, std::filesystem::path image_path = "", uint32_t image_width = 0, uint32_t image_height = 0,
+		uint8_t number_of_color_channels = Constants::NUMBER_OF_COLOR_CHANNELS, uint8_t number_of_clusters = 0,
+		const uint8_t* cluster_positions = nullptr, bool use_high_quality_resizing = true);
+*/
+
 ImageDisplayPanel::ImageDisplayPanel(wxWindow* parent, std::filesystem::path image_path, uint32_t image_width, uint32_t image_height, 
-	uint8_t number_of_color_channels, uint8_t number_of_clusters, const uint8_t* cluster_positions) :
+	uint8_t number_of_color_channels, uint8_t number_of_clusters, const uint8_t* cluster_positions, bool use_high_quality_resizing) :
 	
 	current_image_path(image_path),
 	displayed_number_of_color_channels(number_of_color_channels),
@@ -18,10 +25,11 @@ ImageDisplayPanel::ImageDisplayPanel(wxWindow* parent, std::filesystem::path ima
 	initial_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxNullBitmap)),
 	compressed_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxNullBitmap)),
 	compressed_image(nullptr),
-	initial_image(nullptr)
+	initial_image(nullptr),
+	use_high_quality_resizing(use_high_quality_resizing)
 
 {
-	// if the cluster positions exist and the compressed number of clusters and the number of colo0r channels is not or less than 0,
+	// if the cluster positions exist and the compressed number of clusters and the number of color channels is not or less than 0,
 	// then initialize with a dynamic array
 	if (cluster_positions && compressed_number_of_clusters > 0 && number_of_color_channels > 0)
 	{
@@ -74,7 +82,9 @@ void ImageDisplayPanel::resize_images()
 		uint32_t new_image_width = static_cast<uint32_t>(std::round(displayed_width * scale_factor));
 		uint32_t new_image_height = static_cast<uint32_t>(std::round(displayed_height * scale_factor));
 
-		wxImage resized_initial_image = initial_image->Scale(new_image_width, new_image_height, wxIMAGE_QUALITY_HIGH);
+		wxImageResizeQuality quality = use_high_quality_resizing ? wxIMAGE_QUALITY_HIGH : wxIMAGE_QUALITY_NORMAL;
+		wxMessageBox(std::to_string(max_image_sizes.GetWidth()) + " " + std::to_string(max_image_sizes.GetHeight()));
+		wxImage resized_initial_image = initial_image->Scale(new_image_width, new_image_height, quality);
 		initial_image_map->SetBitmap(wxBitmap(resized_initial_image));
 
 		// resize the compressed image map if it exists
@@ -120,10 +130,10 @@ void ImageDisplayPanel::refresh_image_maps_and_descriptions(bool clear_descripti
 		image_description_panel->update_attribute_values(current_image_path, displayed_width, displayed_height,
 			displayed_number_of_color_channels, compressed_number_of_clusters, compressed_cluster_positions);
 
+	this->Layout();
+
 	// resize the images to fit into the current frame's dimensions
 	resize_images();
-
-	this->Layout();
 }
 
 // accessor methods
@@ -133,6 +143,7 @@ std::filesystem::path ImageDisplayPanel::get_current_image_path() const { return
 uint8_t ImageDisplayPanel::get_displayed_number_of_color_channels() const { return displayed_number_of_color_channels; }
 uint8_t ImageDisplayPanel::get_compressed_number_of_clusters() const { return compressed_number_of_clusters; }
 const uint8_t* ImageDisplayPanel::get_compressed_cluster_positions() const { return compressed_cluster_positions; }
+bool ImageDisplayPanel::get_use_high_quality_resizing() const { return use_high_quality_resizing; }
 
 // setter methods
 bool ImageDisplayPanel::set_initial_image(const wxImage* new_initial_image)
@@ -196,3 +207,6 @@ bool ImageDisplayPanel::set_compressed_cluster_positions(const uint8_t* new_clus
 
 	return true;
 }
+
+void ImageDisplayPanel::set_use_high_quality_resizing(bool new_use_high_quality_resizing) 
+{ use_high_quality_resizing = new_use_high_quality_resizing; }

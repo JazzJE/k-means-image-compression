@@ -8,11 +8,11 @@
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/timer.h>
-
 #include <filesystem>
-#include "KClusterAlgorithm.h"
+
 #include "CustomWidgets/ImageDisplayPanel.h"
 #include "Frames/OptionFrames/ImageOptionFrame.h"
+#include "KClusterAlgorithm.h"
 
 class CompressSingleFrame : public ImageOptionFrame
 {

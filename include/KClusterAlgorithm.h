@@ -1,4 +1,6 @@
+#pragma once
 #include <cstdint>
+
 #include "Constants.h"
 
 class KClusterAlgorithm
