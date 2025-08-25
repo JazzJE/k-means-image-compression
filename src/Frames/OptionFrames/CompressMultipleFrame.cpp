@@ -180,8 +180,8 @@ void CompressMultipleFrame::open_and_compress_multiple_images_option(wxCommandEv
             current_index_maps[i] = temp_index_map;
             
 			// clean up the dynamic memory here, as the display panel makes copies
-            new_initial_image->Destroy();
-            new_compressed_image->Destroy();
+            delete new_initial_image;
+            delete new_compressed_image;
         }
         
         this->Layout();
