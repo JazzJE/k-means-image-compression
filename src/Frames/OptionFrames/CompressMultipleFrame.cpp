@@ -15,7 +15,7 @@
 
 CompressMultipleFrame::CompressMultipleFrame(wxFrame* main_frame, const wxString& title) : 
     ImageOptionFrame(main_frame, title),
-	scrolled_window(new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL)),
+	scrolled_window(new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL)),
 	scrolled_sizer(new wxBoxSizer(wxVERTICAL)), 
 	button_panel(new wxPanel(this, wxID_ANY)),
     clusters_spinctrl(new wxSpinCtrl(button_panel, wxID_ANY,
@@ -50,6 +50,8 @@ CompressMultipleFrame::CompressMultipleFrame(wxFrame* main_frame, const wxString
 
     // scrolled window
     scrolled_window->SetSizer(scrolled_sizer);
+    scrolled_window->SetScrollRate(0, 10);
+    scrolled_window->SetDoubleBuffered(true);
 
     // main sizer
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
@@ -78,6 +80,17 @@ void CompressMultipleFrame::OnResize(wxSizeEvent& event)
         wasMaximized = IsMaximized();
         CallAfter([this]() 
             {
+                int scrolled_width = scrolled_window->GetClientSize().GetWidth();
+                int scrolled_height = scrolled_window->GetClientSize().GetHeight();
+
+                // update the size of the panels
+                for (size_t i = 0; i < number_of_image_panels; i++)
+                    image_display_panels[i]->SetMinSize(wxSize(scrolled_width - 20, scrolled_height));
+
+                scrolled_window->Layout();
+                scrolled_window->FitInside();
+
+                // update the size of the images now
                 for (size_t i = 0; i < number_of_image_panels; i++)
                     image_display_panels[i]->resize_images();
             }
@@ -95,6 +108,17 @@ void CompressMultipleFrame::OnResize(wxSizeEvent& event)
 
 void CompressMultipleFrame::OnResizeTimer(wxTimerEvent& /*event*/)
 {
+    int scrolled_width = scrolled_window->GetClientSize().GetWidth();
+    int scrolled_height = scrolled_window->GetClientSize().GetHeight();
+
+    // update the size of the panels
+    for (size_t i = 0; i < number_of_image_panels; i++)
+        image_display_panels[i]->SetMinSize(wxSize(scrolled_width - 20, scrolled_height));
+
+    scrolled_window->Layout();
+    scrolled_window->FitInside();
+
+    // update the size of the images now
     for (size_t i = 0; i < number_of_image_panels; i++)
         image_display_panels[i]->resize_images();
 }
@@ -139,7 +163,7 @@ void CompressMultipleFrame::open_and_compress_multiple_images_option(wxCommandEv
 			// cluster the data samples internally within the algorithm
             const uint8_t* new_initial_image_data = new_initial_image->GetData();
             wxBusyInfo* busy_info = new wxBusyInfo("Compressing " + new_image_path.filename().string() + "... " +
-                "( " + std::to_string(i + 1) + " / " + std::to_string(number_of_image_panels) + " )");
+                "(" + std::to_string(i + 1) + "/" + std::to_string(number_of_image_panels) + ")");
             cluster_algorithm.cluster_data_samples(new_initial_image_data, number_of_pixels, number_of_clusters);
             delete busy_info;
 			const uint8_t* algorithm_positions = cluster_algorithm.get_cluster_positions();
@@ -169,7 +193,7 @@ void CompressMultipleFrame::open_and_compress_multiple_images_option(wxCommandEv
 
 			// add everything to the sizer
 			scrolled_sizer->Add(new_display_panel, 1, wxEXPAND | wxALL, 5);
-			scrolled_sizer->Add(save_compressed_image_button, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+			scrolled_sizer->Add(save_compressed_image_button, 0, wxALIGN_CENTER_HORIZONTAL);
 			scrolled_sizer->Add(bottom_line, 0, wxEXPAND | wxALL, 5);
 
             // assign the new panel and index map to the array of image display panels for saving later
@@ -187,10 +211,13 @@ void CompressMultipleFrame::open_and_compress_multiple_images_option(wxCommandEv
         this->Layout();
         scrolled_window->Layout();
         scrolled_window->FitInside();
+        scrolled_window->Refresh();
 
         // refresh each panel
         for (size_t i = 0; i < number_of_image_panels; i++)
             image_display_panels[i]->refresh_image_maps_and_descriptions();
+
+        OnResize(wxSizeEvent());
     }
 }
 

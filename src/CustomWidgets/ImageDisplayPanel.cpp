@@ -1,14 +1,7 @@
 #include <wx/filename.h>
-#include <wx/msgdlg.h>
 #include <cstring>
 
 #include "CustomWidgets/ImageDisplayPanel.h"
-
-/*
-ImageDisplayPanel(wxWindow* parent, std::filesystem::path image_path = "", uint32_t image_width = 0, uint32_t image_height = 0,
-		uint8_t number_of_color_channels = Constants::NUMBER_OF_COLOR_CHANNELS, uint8_t number_of_clusters = 0,
-		const uint8_t* cluster_positions = nullptr, bool use_high_quality_resizing = true);
-*/
 
 ImageDisplayPanel::ImageDisplayPanel(wxWindow* parent, std::filesystem::path image_path, uint32_t image_width, uint32_t image_height, 
 	uint8_t number_of_color_channels, uint8_t number_of_clusters, const uint8_t* cluster_positions, bool use_high_quality_resizing) :
@@ -83,7 +76,6 @@ void ImageDisplayPanel::resize_images()
 		uint32_t new_image_height = static_cast<uint32_t>(std::round(displayed_height * scale_factor));
 
 		wxImageResizeQuality quality = use_high_quality_resizing ? wxIMAGE_QUALITY_HIGH : wxIMAGE_QUALITY_NORMAL;
-		wxMessageBox(std::to_string(max_image_sizes.GetWidth()) + " " + std::to_string(max_image_sizes.GetHeight()));
 		wxImage resized_initial_image = initial_image->Scale(new_image_width, new_image_height, quality);
 		initial_image_map->SetBitmap(wxBitmap(resized_initial_image));
 
