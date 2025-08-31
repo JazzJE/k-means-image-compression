@@ -21,8 +21,13 @@ An implementation of K-means clustering for image compression using C++ and no e
 
 ## Requirements
 
-- C++17 compatible compiler
-- CMake 3.16 or higher
+- **CMake ≥ 3.16**
+- A **C++17 compiler**  
+- (Optional) Installed system versions of:
+  - **OpenMP**  
+  - **wxWidgets v3.2.x** (detected automatically if installed via vcpkg or system package manager)
+
+If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
 ## Setup Guide
 
@@ -39,6 +44,11 @@ An implementation of K-means clustering for image compression using C++ and no e
    cmake --build .
    ```
 
+3. **Run the program**
+   ```bash
+   ./"k-means image compression"
+   ```
+
 # Usage
 
 1. Run the executable generated in the `build` directory.
@@ -48,3 +58,4 @@ An implementation of K-means clustering for image compression using C++ and no e
 4. Display any previously saved compressed images by loading the .dat files inside of the "Display Image" option of the GUI
 
 # Example
+

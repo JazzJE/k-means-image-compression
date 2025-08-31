@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(k_means_cluster_image_compression)
 
+include(FetchContent)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -100,8 +102,9 @@ set(SOURCES
     "src/Frames/OptionFrames/CompressSingleFrame.cpp"
     "src/Frames/OptionFrames/ImageOptionFrame.cpp"
     "src/ImageManager.cpp" "src/Frames/OptionFrames/DisplayImageFrame.cpp" 
-     
-    "src/CustomWidgets/ListColorsPanel.cpp" "src/CustomWidgets/ImageDescriptionPanel.cpp"  "src/CustomWidgets/ImageDisplayPanel.cpp")
+    "src/CustomWidgets/ListColorsPanel.cpp" 
+    "src/CustomWidgets/ImageDescriptionPanel.cpp"  
+    "src/CustomWidgets/ImageDisplayPanel.cpp")
 
 # Header files (for IDE organization)
 set(HEADERS
@@ -114,9 +117,9 @@ set(HEADERS
     "include/Frames/OptionFrames/ImageOptionFrame.h"
     "include/ImageManager.h" 
     "include/Frames/OptionFrames/DisplayImageFrame.h" 
-     
     "include/CustomWidgets/ListColorsPanel.h"
- "include/CustomWidgets/ImageDescriptionPanel.h"  "include/CustomWidgets/ImageDisplayPanel.h")
+    "include/CustomWidgets/ImageDescriptionPanel.h"  
+    "include/CustomWidgets/ImageDisplayPanel.h")
 
 # For relative access
 add_compile_definitions(PROJECT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")

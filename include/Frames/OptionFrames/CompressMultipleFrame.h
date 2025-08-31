@@ -40,6 +40,7 @@ private:
 	void OnResizeTimer(wxTimerEvent&);
 
 	void free_current_index_maps();
+	void resize_panels();
 
 public:
 

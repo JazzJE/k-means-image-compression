@@ -83,22 +83,7 @@ void CompressMultipleFrame::OnResize(wxSizeEvent& event)
     {
         wasMaximized = IsMaximized();
         CallAfter([this]() 
-            {
-                int scrolled_width = scrolled_window->GetClientSize().GetWidth();
-                int scrolled_height = scrolled_window->GetClientSize().GetHeight();
-
-                // update the size of the panels
-                for (size_t i = 0; i < number_of_image_panels; i++)
-                    image_display_panels[i]->SetMinSize(wxSize(scrolled_width, scrolled_height * 3 / 4));
-
-                scrolled_window->Layout();
-                scrolled_window->FitInside();
-
-                // update the size of the images
-                for (size_t i = 0; i < number_of_image_panels; i++)
-                    image_display_panels[i]->resize_images();
-            }
-        );
+            { resize_panels(); } );
     }
     // else, continue the resize normally, but use a timer to delay the resizing until the user stops resizing the window 
     // after a short period
@@ -111,21 +96,7 @@ void CompressMultipleFrame::OnResize(wxSizeEvent& event)
 }
 
 void CompressMultipleFrame::OnResizeTimer(wxTimerEvent& /*event*/)
-{
-    int scrolled_width = scrolled_window->GetClientSize().GetWidth();
-    int scrolled_height = scrolled_window->GetClientSize().GetHeight();
-
-    // update the size of the panels
-    for (size_t i = 0; i < number_of_image_panels; i++)
-        image_display_panels[i]->SetMinSize(wxSize(scrolled_width, scrolled_height * 3 / 4));
-
-    scrolled_window->Layout();
-    scrolled_window->FitInside();
-
-    // update the size of the images
-    for (size_t i = 0; i < number_of_image_panels; i++)
-        image_display_panels[i]->resize_images();
-}
+{ resize_panels(); }
 
 void CompressMultipleFrame::open_multiple_images_option(wxCommandEvent& /*event*/)
 {
@@ -222,7 +193,7 @@ void CompressMultipleFrame::generate_compressed_images_option(wxCommandEvent& ev
         uint32_t displayed_height = current_initial_image->GetHeight();
         size_t number_of_pixels = displayed_width * displayed_height;
 
-		wxString current_file_path = current_image_display_panel->get_current_image_path();
+		wxString current_file_path = current_image_display_panel->get_current_image_path().string();
         wxFileName file_name = wxFileName(current_file_path);
 		wxBusyInfo* busy_info = new wxBusyInfo("Compressing " + file_name.GetFullName() + "...");
 
@@ -299,4 +270,21 @@ void CompressMultipleFrame::free_current_index_maps()
         delete[] current_index_maps;
         current_index_maps = nullptr;
     }
+}
+
+void CompressMultipleFrame::resize_panels()
+{
+    int scrolled_width = scrolled_window->GetClientSize().GetWidth();
+    int scrolled_height = scrolled_window->GetClientSize().GetHeight();
+
+    // update the size of the panels
+    for (size_t i = 0; i < number_of_image_panels; i++)
+        image_display_panels[i]->SetMinSize(wxSize(scrolled_width, scrolled_height * 3 / 4));
+
+    scrolled_window->Layout();
+    scrolled_window->FitInside();
+
+    // update the size of the images
+    for (size_t i = 0; i < number_of_image_panels; i++)
+        image_display_panels[i]->resize_images();
 }
