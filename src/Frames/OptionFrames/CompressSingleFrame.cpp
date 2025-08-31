@@ -27,7 +27,6 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
     wxButton* save_transformed_image_button = new wxButton(button_panel, wxID_ANY, "Save Transformed Image");
     wxButton* generate_compressed_image_button = new wxButton(button_panel, wxID_ANY, "Generate Compressed Image");
     wxButton* return_to_menu_button = new wxButton(button_panel, wxID_ANY, "Return to Menu");
-
     wxStaticText* clusters_label = new wxStaticText(button_panel, wxID_ANY, "Number of colors:");
 
     open_image_file_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::open_image_file_option, this);
@@ -39,10 +38,8 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
 	this->Bind(wxEVT_SIZE, &CompressSingleFrame::OnResize, this);
     this->Bind(wxEVT_TIMER, &CompressSingleFrame::OnResizeTimer, this, ID_ZoomTimer);
 
-    wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* button_sizer = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
-
     // buttons
+    wxWrapSizer* button_sizer = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
     button_sizer->Add(open_image_file_button, 0, wxALL, 5);
     button_sizer->Add(save_transformed_image_button, 0, wxALL, 5);
     button_sizer->AddSpacer(20);
@@ -55,6 +52,7 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
     button_panel->SetSizer(button_sizer);
 
     // layout
+    wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     main_sizer->Add(button_panel, 0, wxEXPAND);   // buttons above
     main_sizer->Add(image_display_panel, 1, wxEXPAND); // image panel
 

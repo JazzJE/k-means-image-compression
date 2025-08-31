@@ -1,1 +1,50 @@
-# k-means-image-compression
+# K-Clustering Image Compression
+
+An implementation of K-means clustering for image compression using C++ and no external ML libraries. This project, again, is a pure demonstration of my appreciation for machine learning and is not intended for production use. I still love raw pointers, but I'll start implementing smart ones in my next projects.
+
+## Table of Contents
+
+- [Features](#features)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Example](#example)
+- [License](#license)
+
+# Features
+
+- K-means++ initialization for better clustering
+- Customizable number of clusters using a spin control
+- Image loading and saving with custom .dat formats that drastically reduce file size
+- Simple GUI design with wxWidgets for real-time compression, interaction and visualization
+
+# Setup
+
+## Requirements
+
+- C++17 compatible compiler
+- CMake 3.16 or higher
+
+## Setup Guide
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/JazzJE/k-means-image-compression
+	```
+
+2. **Build the project:**
+   ```bash
+   mkdir build
+   cd build
+   cmake ..
+   cmake --build .
+   ```
+
+# Usage
+
+1. Run the executable generated in the `build` directory.
+2. Use the GUI to load an image, set the number of clusters, and compress an image
+3. Save any compressed images that you want to keep
+	- The compressed image will be saved in a custom .dat format within a default directory named `transformed_images` in the root project directory (this directory is created upon first execution of the program)
+4. Display any previously saved compressed images by loading the .dat files inside of the "Display Image" option of the GUI
+
+# Example

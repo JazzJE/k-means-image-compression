@@ -75,7 +75,8 @@ void ListColorsPanel::update_colors(uint8_t new_number_of_color_channels, uint8_
 			new_color_data[c] = new_color_values[color_first_feature_index + c];
 		wxImage new_image(1, 1, new_color_data, false);
 		new_image.Rescale(20, 20, wxIMAGE_QUALITY_NORMAL);
-		wxStaticBitmap* new_bitmap = new wxStaticBitmap(scrolled_window, wxID_ANY, wxBitmap(new_image));
+		wxStaticBitmap* new_bitmap = new wxStaticBitmap(scrolled_window, wxID_ANY, wxBitmap(new_image), wxDefaultPosition, 
+			wxDefaultSize, wxBORDER_RAISED);
 
 		// label
 		std::string new_color_label_text = "(";

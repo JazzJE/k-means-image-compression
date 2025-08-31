@@ -30,7 +30,8 @@ private:
 	enum { ID_ZoomTimer = wxID_HIGHEST + 1, ID_NEWHIGHEST = ID_ZoomTimer + 1 };
 	wxTimer* const resize_timer;
 
-	void open_and_compress_multiple_images_option(wxCommandEvent&);
+	void open_multiple_images_option(wxCommandEvent&);
+	void generate_compressed_images_option(wxCommandEvent& event);
 	void save_compressed_image_option(wxCommandEvent& event);
 
 	// used for resizing all image panels when the frame is resized or changes dimensions
