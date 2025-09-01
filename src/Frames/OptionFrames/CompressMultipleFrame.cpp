@@ -175,7 +175,7 @@ void CompressMultipleFrame::open_multiple_images_option(wxCommandEvent& /*event*
         for (size_t i = 0; i < number_of_image_panels; i++)
             image_display_panels[i]->refresh_image_maps_and_descriptions();
 
-        OnResize(wxSizeEvent());
+        resize_panels();
     }
 }
 

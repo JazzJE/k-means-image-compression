@@ -46,7 +46,7 @@ If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
 3. **Run the program**
    ```bash
-   ./"k-means image compression"
+   ./k_means_image_compression
    ```
 
 # Usage
