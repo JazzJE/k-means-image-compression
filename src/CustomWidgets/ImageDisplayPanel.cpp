@@ -92,39 +92,18 @@ void ImageDisplayPanel::resize_images()
 
 void ImageDisplayPanel::refresh_image_maps_and_descriptions(bool clear_description)
 {
-	wxBitmap curr_map = wxNullBitmap;
-	uint32_t displayed_width = 0;
-	uint32_t displayed_height = 0;
-
-	// add the initial image to the screen if it now exists
-	if (initial_image)
-	{
-		curr_map = wxBitmap(*initial_image);
-		displayed_width = initial_image->GetWidth();
-		displayed_height = initial_image->GetHeight();
-	}
-	initial_image_map->SetBitmap(curr_map);
-	initial_image_map->Refresh();
-	
-	curr_map = wxNullBitmap;
-
-	// add the compressed image to the screen if it now exists
-	if (compressed_image)
-		curr_map = wxBitmap(*compressed_image);
-	compressed_image_map->SetBitmap(curr_map);
-	compressed_image_map->Refresh();
-
-	// update image description panel with the compressed image data
+	// update image description panel with the metadata
 	if (clear_description)
-		image_description_panel->update_attribute_values(current_image_path, displayed_width, displayed_height,
+		image_description_panel->update_attribute_values(current_image_path, initial_image->GetWidth(), initial_image->GetHeight(),
 			displayed_number_of_color_channels);
 	else
-		image_description_panel->update_attribute_values(current_image_path, displayed_width, displayed_height,
+		image_description_panel->update_attribute_values(current_image_path, initial_image->GetWidth(), initial_image->GetHeight(),
 			displayed_number_of_color_channels, compressed_number_of_clusters, compressed_cluster_positions);
 
 	this->Layout();
 
 	// resize the images to fit into the current frame's dimensions
+	// note this will also load the images into the static bitmaps
 	resize_images();
 }
 

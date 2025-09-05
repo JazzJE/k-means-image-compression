@@ -109,7 +109,7 @@ void CompressMultipleFrame::open_multiple_images_option(wxCommandEvent& /*event*
 		// clean up dynamic memory
         delete[] image_display_panels;
 		free_current_index_maps();
-        scrolled_window->DestroyChildren();
+        scrolled_sizer->Clear(true);
 
         // update everything to the new values
 		number_of_image_panels = new_image_paths.GetCount();

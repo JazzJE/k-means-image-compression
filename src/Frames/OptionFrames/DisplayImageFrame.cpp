@@ -190,7 +190,10 @@ void DisplayImageFrame::resize_displayed_image()
     {
         uint32_t original_width = displayed_image->GetWidth();
         uint32_t original_height = displayed_image->GetHeight();
-        wxSize max_image_sizes = image_window->GetSize();
+
+		// make it so the image max height only is 95% of the window height to avoid the bottom of the image from touching the
+		// bottom of the window
+        wxSize max_image_sizes = wxSize(image_window->GetSize().GetWidth(), image_window->GetSize().GetHeight() * 0.95);
 
         double scale_x = static_cast<double>(max_image_sizes.GetWidth()) / original_width;
         double scale_y = static_cast<double>(max_image_sizes.GetHeight()) / original_height;
