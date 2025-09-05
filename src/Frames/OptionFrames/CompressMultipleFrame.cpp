@@ -183,47 +183,52 @@ void CompressMultipleFrame::generate_compressed_images_option(wxCommandEvent& ev
 {
     uint8_t number_of_clusters = clusters_spinctrl->GetValue();
 
-    // go through each image panel, and compress the image with the given number of clusters
-    for (size_t i = 0; i < number_of_image_panels; i++)
+    if (number_of_image_panels > 0)
     {
-        const ImageDisplayPanel* current_image_display_panel = image_display_panels[i];
-        const wxImage* current_initial_image = current_image_display_panel->get_initial_image();
-        uint8_t displayed_number_of_color_channels = current_image_display_panel->get_displayed_number_of_color_channels();
-        uint32_t displayed_width = current_initial_image->GetWidth();
-        uint32_t displayed_height = current_initial_image->GetHeight();
-        size_t number_of_pixels = displayed_width * displayed_height;
+        // go through each image panel, and compress the image with the given number of clusters
+        for (size_t i = 0; i < number_of_image_panels; i++)
+        {
+            const ImageDisplayPanel* current_image_display_panel = image_display_panels[i];
+            const wxImage* current_initial_image = current_image_display_panel->get_initial_image();
+            uint8_t displayed_number_of_color_channels = current_image_display_panel->get_displayed_number_of_color_channels();
+            uint32_t displayed_width = current_initial_image->GetWidth();
+            uint32_t displayed_height = current_initial_image->GetHeight();
+            size_t number_of_pixels = displayed_width * displayed_height;
 
-		wxString current_file_path = current_image_display_panel->get_current_image_path().string();
-        wxFileName file_name = wxFileName(current_file_path);
-		wxBusyInfo* busy_info = new wxBusyInfo("Compressing " + file_name.GetFullName() + "...");
+            wxString current_file_path = current_image_display_panel->get_current_image_path().string();
+            wxFileName file_name = wxFileName(current_file_path);
+            wxBusyInfo* busy_info = new wxBusyInfo("Compressing " + file_name.GetFullName() + "...");
 
-        // cluster the data samples internally within the algorithm
-        const uint8_t* initial_image_data = current_initial_image->GetData();
-        cluster_algorithm.cluster_data_samples(initial_image_data, number_of_pixels, number_of_clusters);
-        const uint8_t* algorithm_positions = cluster_algorithm.get_cluster_positions();
-        const uint8_t* algorithm_index_map = cluster_algorithm.get_index_map();
+            // cluster the data samples internally within the algorithm
+            const uint8_t* initial_image_data = current_initial_image->GetData();
+            cluster_algorithm.cluster_data_samples(initial_image_data, number_of_pixels, number_of_clusters);
+            const uint8_t* algorithm_positions = cluster_algorithm.get_cluster_positions();
+            const uint8_t* algorithm_index_map = cluster_algorithm.get_index_map();
 
-        delete busy_info;
+            delete busy_info;
 
-        // generate the new compressed image
-        wxImage* new_compressed_image = ImageManager::generate_compressed_image(displayed_number_of_color_channels,
-            number_of_clusters, algorithm_positions, displayed_width, displayed_height, algorithm_index_map);
-        // set the new compressed image to the display panel
-        image_display_panels[i]->set_compressed_image(new_compressed_image);
-		image_display_panels[i]->set_compressed_cluster_positions(algorithm_positions, number_of_clusters, displayed_number_of_color_channels);
-		image_display_panels[i]->set_compressed_number_of_clusters(number_of_clusters);
+            // generate the new compressed image
+            wxImage* new_compressed_image = ImageManager::generate_compressed_image(displayed_number_of_color_channels,
+                number_of_clusters, algorithm_positions, displayed_width, displayed_height, algorithm_index_map);
+            // set the new compressed image to the display panel
+            image_display_panels[i]->set_compressed_image(new_compressed_image);
+            image_display_panels[i]->set_compressed_cluster_positions(algorithm_positions, number_of_clusters, displayed_number_of_color_channels);
+            image_display_panels[i]->set_compressed_number_of_clusters(number_of_clusters);
 
-        // update the index map to the new one
-        uint8_t* temp_index_map = new uint8_t[number_of_pixels];
-        std::memcpy(temp_index_map, algorithm_index_map, number_of_pixels * sizeof(uint8_t));
-        delete[] current_index_maps[i];
-        current_index_maps[i] = temp_index_map;
+            // update the index map to the new one
+            uint8_t* temp_index_map = new uint8_t[number_of_pixels];
+            std::memcpy(temp_index_map, algorithm_index_map, number_of_pixels * sizeof(uint8_t));
+            delete[] current_index_maps[i];
+            current_index_maps[i] = temp_index_map;
 
-        // refresh the display panel
-        image_display_panels[i]->refresh_image_maps_and_descriptions();
-        delete new_compressed_image;
+            // refresh the display panel
+            image_display_panels[i]->refresh_image_maps_and_descriptions();
+            delete new_compressed_image;
+        }
+        wxMessageBox("Done compressing all images!", "Done", wxOK | wxICON_INFORMATION);
     }
-	wxMessageBox("Done compressing all images!", "Done", wxOK | wxICON_INFORMATION);
+    else
+        wxMessageBox("There are no compressed images to generate!", "Generate Warning", wxOK | wxICON_WARNING);;
 }
 
 void CompressMultipleFrame::save_compressed_image_option(wxCommandEvent& event)

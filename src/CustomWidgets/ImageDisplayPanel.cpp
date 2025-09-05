@@ -15,8 +15,8 @@ ImageDisplayPanel::ImageDisplayPanel(wxWindow* parent, std::filesystem::path ima
 	image_description_panel(new ImageDescriptionPanel(this, image_path, image_width, image_height,
 		number_of_color_channels, cluster_positions, number_of_clusters)), 
 	image_panel(new wxPanel(this, wxID_ANY)),
-	initial_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxNullBitmap)),
-	compressed_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxNullBitmap)),
+	initial_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxBitmap(1,1))),
+	compressed_image_map(new wxStaticBitmap(image_panel, wxID_ANY, wxBitmap(1,1))),
 	compressed_image(nullptr),
 	initial_image(nullptr),
 	use_high_quality_resizing(use_high_quality_resizing)

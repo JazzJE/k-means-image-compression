@@ -22,7 +22,7 @@ DisplayImageFrame::DisplayImageFrame(wxFrame* main_frame, const wxString& title)
 
     image_window(new wxScrolledWindow(this, wxID_ANY,
         wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL)),
-    displayed_image_map(new wxStaticBitmap(image_window, wxID_ANY, wxNullBitmap)),
+    displayed_image_map(new wxStaticBitmap(image_window, wxID_ANY, wxBitmap(1,1))),
     image_description_panel(new ImageDescriptionPanel(this)),
 
     zoom_timer(new wxTimer(this, ID_ZoomTimer))
