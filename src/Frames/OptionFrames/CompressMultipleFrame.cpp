@@ -144,15 +144,27 @@ void CompressMultipleFrame::open_multiple_images_option(wxCommandEvent& /*event*
 
 			// generate a button with a unique ID that will be used to save the compressed image as a .dat file
 			wxFileName file_name = wxFileName(new_image_path.string());
-			wxButton* save_compressed_image_button = new wxButton(scrolled_window, ID_NEWHIGHEST + static_cast<int>(i), 
+			wxPanel* button_panel = new wxPanel(scrolled_window, wxID_ANY);
+			wxButton* save_compressed_image_as_dat_button = new wxButton(button_panel, ID_NEWHIGHEST + static_cast<int>(i), 
                 "Save Compressed " + file_name.GetFullName() + " Image As .dat File");
-			save_compressed_image_button->Bind(wxEVT_BUTTON, &CompressMultipleFrame::save_compressed_image_option, this);
+            wxButton* save_compressed_image_as_png_button = new wxButton(button_panel, ID_NEWHIGHEST + static_cast<int>(i),
+				"Save Compressed " + file_name.GetFullName() + " Image As .png File");
 
-			// add everything to the sizer
+			save_compressed_image_as_dat_button->Bind(wxEVT_BUTTON, &CompressMultipleFrame::save_compressed_image_as_dat_option, this);
+			save_compressed_image_as_png_button->Bind(wxEVT_BUTTON, &CompressMultipleFrame::save_compressed_image_as_png_option, this);
+
+			// add buttons to their panel
+			wxBoxSizer* button_sizer = new wxBoxSizer(wxHORIZONTAL);
+			button_sizer->Add(save_compressed_image_as_dat_button, 0, wxALL, 5);
+            button_sizer->AddSpacer(20);
+			button_sizer->Add(save_compressed_image_as_png_button, 0, wxALL, 5);
+            button_panel->SetSizer(button_sizer);
+
+            // add everything to the panel now
             scrolled_sizer->AddSpacer(20);
 			scrolled_sizer->Add(new_display_panel, 1, wxEXPAND | wxALL, 5);
 			scrolled_sizer->AddSpacer(20);
-			scrolled_sizer->Add(save_compressed_image_button, 0, wxALIGN_CENTER_HORIZONTAL);
+			scrolled_sizer->Add(button_panel, 0, wxALIGN_CENTER_HORIZONTAL);
 			scrolled_sizer->AddSpacer(20);
 
 			// create a bottom line for every panel except the last one
@@ -231,7 +243,7 @@ void CompressMultipleFrame::generate_compressed_images_option(wxCommandEvent& ev
         wxMessageBox("There are no compressed images to generate!", "Generate Warning", wxOK | wxICON_WARNING);;
 }
 
-void CompressMultipleFrame::save_compressed_image_option(wxCommandEvent& event)
+void CompressMultipleFrame::save_compressed_image_as_dat_option(wxCommandEvent& event)
 {
     // only save if the compressed image actually exists
 	int file_index = event.GetId() - ID_NEWHIGHEST;
@@ -264,6 +276,31 @@ void CompressMultipleFrame::save_compressed_image_option(wxCommandEvent& event)
     }
     else
 		wxMessageBox("Could not save " + file_path.GetFullName() + ".", "Save Warning", wxOK | wxICON_WARNING);
+}
+
+void CompressMultipleFrame::save_compressed_image_as_png_option(wxCommandEvent& event)
+{
+    // only save if the compressed image actually exists
+    int file_index = event.GetId() - ID_NEWHIGHEST;
+    const ImageDisplayPanel* current_image_display_panel = image_display_panels[file_index];
+    const wxImage* current_compressed_image = current_image_display_panel->get_compressed_image();
+    std::filesystem::path current_image_path = current_image_display_panel->get_current_image_path();
+    wxFileName file_path(current_image_path.string());
+
+    if (current_compressed_image)
+    {
+        std::string image_file_name = file_path.GetName().ToStdString();
+        std::string output_path = (ImageManager::default_dat_output_path / (image_file_name + ".png")).string();
+
+        if (!current_compressed_image->SaveFile(output_path, wxBITMAP_TYPE_PNG))
+        {
+            wxMessageBox("Failed to save the compressed image!", "Save Warning", wxOK | wxICON_WARNING);
+            return;
+        }
+        wxMessageBox("Saved to " + output_path, "Saved", wxOK | wxICON_INFORMATION);
+    }
+    else
+        wxMessageBox("Could not save " + file_path.GetFullName() + ".", "Save Warning", wxOK | wxICON_WARNING);
 }
 
 void CompressMultipleFrame::free_current_index_maps()

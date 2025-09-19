@@ -124,7 +124,12 @@ bool ImageDisplayPanel::set_initial_image(const wxImage* new_initial_image)
 
 	// if the initial image is changing, then delete the old one and the current compressed image
 	if (initial_image) { delete initial_image; initial_image = nullptr; }
-	if (compressed_image) { delete compressed_image; compressed_image = nullptr; }
+	if (compressed_image) 
+	{ 
+		delete compressed_image; 
+		compressed_image = nullptr; 
+		compressed_image_map->SetBitmap(wxBitmap(1,1)); // reset the compressed image map
+	}
 
 	initial_image = new wxImage(*new_initial_image);
 

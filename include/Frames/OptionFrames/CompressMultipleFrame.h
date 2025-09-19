@@ -32,7 +32,8 @@ private:
 
 	void open_multiple_images_option(wxCommandEvent&);
 	void generate_compressed_images_option(wxCommandEvent& event);
-	void save_compressed_image_option(wxCommandEvent& event);
+	void save_compressed_image_as_dat_option(wxCommandEvent& event);
+	void save_compressed_image_as_png_option(wxCommandEvent& event);
 
 	// used for resizing all image panels when the frame is resized or changes dimensions
 	ImageDisplayPanel** image_display_panels;

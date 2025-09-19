@@ -24,13 +24,15 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
 	resize_timer(new wxTimer(this, ID_ZoomTimer))
 {
     wxButton* open_image_file_button = new wxButton(button_panel, wxID_ANY, "Open Image File");
-    wxButton* save_transformed_image_button = new wxButton(button_panel, wxID_ANY, "Save Transformed Image");
+    wxButton* save_transformed_image_as_dat_button = new wxButton(button_panel, wxID_ANY, "Save Transformed Image as .dat");
+	wxButton* save_transformed_image_as_png_button = new wxButton(button_panel, wxID_ANY, "Save Transformed Image as PNG");
     wxButton* generate_compressed_image_button = new wxButton(button_panel, wxID_ANY, "Generate Compressed Image");
     wxButton* return_to_menu_button = new wxButton(button_panel, wxID_ANY, "Return to Menu");
     wxStaticText* clusters_label = new wxStaticText(button_panel, wxID_ANY, "Number of colors:");
 
     open_image_file_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::open_image_file_option, this);
-    save_transformed_image_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::save_transformed_image_option, this);
+    save_transformed_image_as_dat_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::save_transformed_image_as_dat_option, this);
+	save_transformed_image_as_png_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::save_transformed_image_as_png_option, this);
     generate_compressed_image_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::generate_compressed_image_option, this);
     return_to_menu_button->Bind(wxEVT_BUTTON, &CompressSingleFrame::return_to_menu_option, this);
 
@@ -41,7 +43,8 @@ CompressSingleFrame::CompressSingleFrame(wxFrame* main_frame, const wxString& ti
     // buttons
     wxWrapSizer* button_sizer = new wxWrapSizer(wxHORIZONTAL, wxWRAPSIZER_DEFAULT_FLAGS);
     button_sizer->Add(open_image_file_button, 0, wxALL, 5);
-    button_sizer->Add(save_transformed_image_button, 0, wxALL, 5);
+    button_sizer->Add(save_transformed_image_as_dat_button, 0, wxALL, 5);
+    button_sizer->Add(save_transformed_image_as_png_button, 0, wxALL, 5);
     button_sizer->AddSpacer(20);
     button_sizer->Add(generate_compressed_image_button, 0, wxALL, 5);
     button_sizer->AddSpacer(10);
@@ -114,7 +117,7 @@ void CompressSingleFrame::open_image_file_option(wxCommandEvent& /*event*/)
 }
 
 // save the transformed image as a .dat file within the default output directory defined in ImageManager
-void CompressSingleFrame::save_transformed_image_option(wxCommandEvent& /*event*/)
+void CompressSingleFrame::save_transformed_image_as_dat_option(wxCommandEvent& /*event*/)
 {
 	wxImage* compressed_image = image_display_panel->get_compressed_image();
 
@@ -132,6 +135,8 @@ void CompressSingleFrame::save_transformed_image_option(wxCommandEvent& /*event*
         uint32_t displayed_width = compressed_image->GetWidth();
         uint32_t displayed_height = compressed_image->GetHeight();
 
+        std::string output_path = (ImageManager::default_dat_output_path / (image_file_name + ".dat")).string();
+
         if (!ImageManager::save_image_as_dat(image_file_name, displayed_number_of_color_channels, compressed_number_of_clusters,
             compressed_cluster_positions, displayed_width, displayed_height, current_index_map))
         {
@@ -139,9 +144,33 @@ void CompressSingleFrame::save_transformed_image_option(wxCommandEvent& /*event*
             return;
         }
 
-        wxMessageBox("Saved to " + (ImageManager::default_dat_output_path / (image_file_name + ".dat")).string(), "Saved", wxOK | wxICON_INFORMATION);
+        wxMessageBox("Saved to " + output_path, "Saved", wxOK | wxICON_INFORMATION);
     }
 
+    else
+        wxMessageBox("There is no compressed image to save!", "Save Warning", wxOK | wxICON_WARNING);
+}
+
+// save the transformed image as a png image with the default directory path mentioned in ImageManager
+void CompressSingleFrame::save_transformed_image_as_png_option(wxCommandEvent& /*event*/)
+{
+    wxImage* compressed_image = image_display_panel->get_compressed_image();
+    // if there is a compressed image available to save, then we can save it
+    if (compressed_image)
+    {
+        std::filesystem::path current_image_path = image_display_panel->get_current_image_path();
+        wxFileName file_path(current_image_path.string());
+        std::string image_file_name = file_path.GetName().ToStdString();
+
+        std::string output_path = (ImageManager::default_dat_output_path / (image_file_name + ".png")).string();
+
+        if (!compressed_image->SaveFile(output_path, wxBITMAP_TYPE_PNG))
+        {
+            wxMessageBox("Failed to save the compressed image!", "Save Warning", wxOK | wxICON_WARNING);
+            return;
+        }
+        wxMessageBox("Saved to " + output_path, "Saved", wxOK | wxICON_INFORMATION);
+    }
     else
         wxMessageBox("There is no compressed image to save!", "Save Warning", wxOK | wxICON_WARNING);
 }

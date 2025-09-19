@@ -30,7 +30,8 @@ private:
 	wxTimer* const resize_timer;
 
 	void open_image_file_option(wxCommandEvent&);
-	void save_transformed_image_option(wxCommandEvent&);
+	void save_transformed_image_as_dat_option(wxCommandEvent&);
+	void save_transformed_image_as_png_option(wxCommandEvent&);
 	void generate_compressed_image_option(wxCommandEvent&);
 
 	// for updating image sizes when the frame is resized or changes dimensions
