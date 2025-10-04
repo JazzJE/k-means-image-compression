@@ -58,3 +58,18 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
 # Example
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/JazzJE/k-means-image-compression/main/example%20assets/original%20image.jpg"
+       width="45%" alt="Original Image (3.78 MB)">
+  <img src="https://raw.githubusercontent.com/JazzJE/k-means-image-compression/main/example%20assets/transformed%20image.png"
+       width="45%" alt="Compressed Image (2.55 MB)">
+</p>
+
+<p align="center">
+  <strong>Original - 3.78 MB</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Compressed (K-Means) - 2.55 MB</strong>
+</p>
+
+<p align="center">
+  <em>Compression reduced file size by approximately 33% with minimal quality loss.</em>
+</p>
