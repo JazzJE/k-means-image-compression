@@ -5,3 +5,6 @@ out/
 .vs/
 CMakeSettings.json
 enc_temp_folder/
+
+# local directories
+transformed_images/
