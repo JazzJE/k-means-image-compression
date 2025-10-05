@@ -43,6 +43,11 @@ An implementation of K-means clustering for image compression using C++ and no e
    sudo apt update && sudo apt install -y build-essential cmake libwxgtk3.0-gtk3-dev libgtk-3-dev
    ```
 
+   > **Tip:** If `libwxgtk3.2-dev` isn’t available, try:
+   > ```bash
+   > sudo apt install -y libwxgtk3.2-gtk3-dev libwxbase3.2-dev
+   > ```
+
 ### macOS
 
    ```bash
