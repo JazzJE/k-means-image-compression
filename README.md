@@ -26,10 +26,7 @@ An implementation of K-means clustering for image compression using C++ and no e
 - **OpenMP** (optional; will use system version if available)  
 - **wxWidgets v3.2.x** (must be installed on your system)
 
-> **Important:** Users must install wxWidgets manually. On different platforms:  
-> - **Linux (Debian/Ubuntu/Kali):** `sudo apt install libwxgtk3.0-gtk3-dev libgtk-3-dev`  
-> - **macOS:** `brew install wxwidgets`  
-> - **Windows:** Use [vcpkg](https://github.com/microsoft/vcpkg) or a pre-built installer.
+> **Important:** Users must install wxWidgets manually. The short setup guide for it is provided below.
 
 ## Setup Guide
 
@@ -40,13 +37,13 @@ An implementation of K-means clustering for image compression using C++ and no e
 
 2. **Install dependencies**
 
-   - Linux (Debian/Ubuntu/Kali)
+### Linux (Debian/Ubuntu/Kali)
 
    ```bash
    sudo apt update && sudo apt install -y build-essential cmake libwxgtk3.0-gtk3-dev libgtk-3-dev
    ```
 
-   - macOS
+### macOS
 
    ```bash
    brew update && brew install cmake wxwidgets
@@ -57,7 +54,7 @@ An implementation of K-means clustering for image compression using C++ and no e
    export PATH="/opt/homebrew/opt/wxwidgets/bin:$PATH"
    ```
 
-   - Windows
+### Windows
 
    ```powershell
    git clone https://github.com/microsoft/vcpkg.git
