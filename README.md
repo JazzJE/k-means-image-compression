@@ -51,10 +51,12 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
 # Usage
 
-1. Use the GUI to load an image, set the number of clusters, and compress an image
-2. Save any compressed images that you want to keep
-	- The compressed image will be saved in a custom .dat format within a default directory named `transformed_images` in the root project directory (this directory is created upon first execution of the program)
-3. Display any previously saved compressed images in high quality 
+1. Use the GUI to load an image, set the number of clusters, and compress an image  
+   ![Compress Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/single%20compress%20image.png)
+
+2. Save any compressed images that you want to keep in a `.PNG` or custom `.DAT` format  
+   (the `.DAT` file can only be opened using the display option of the program)  
+   ![Display Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/display%20image.png)
 
 # Example
 
