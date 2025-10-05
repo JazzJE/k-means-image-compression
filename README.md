@@ -21,13 +21,15 @@ An implementation of K-means clustering for image compression using C++ and no e
 
 ## Requirements
 
-- **CMake ≥ 3.16**
+- **CMake ≥ 3.16**  
 - A **C++17 compiler**  
-- (Optional) Installed system versions of:
-  - **OpenMP**  
-  - **wxWidgets v3.2.x** (detected automatically if installed via vcpkg or system package manager)
+- **OpenMP** (optional; will use system version if available)  
+- **wxWidgets v3.2.x** (must be installed on your system)
 
-__If not found, both OpenMP and wxWidgets will be fetched and built from source.__
+> **Important:** Users must install wxWidgets manually. On different platforms:  
+> - **Linux (Debian/Ubuntu/Kali):** `sudo apt install libwxgtk3.0-gtk3-dev libgtk-3-dev`  
+> - **macOS:** `brew install wxwidgets`  
+> - **Windows:** Use [vcpkg](https://github.com/microsoft/vcpkg) or a pre-built installer.
 
 ## Setup Guide
 
@@ -36,7 +38,42 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
    git clone https://github.com/JazzJE/k-means-image-compression
 	```
 
-2. **Build the project:**
+2. **Install dependencies**
+
+   - Linux (Debian/Ubuntu/Kali)
+
+   ```bash
+   sudo apt update && sudo apt install -y build-essential cmake libwxgtk3.0-gtk3-dev libgtk-3-dev
+   ```
+
+   - macOS
+
+   ```bash
+   brew update && brew install cmake wxwidgets
+   ```
+
+   > **Note:** You may need to add wxWidgets to your PATH on macOS:
+   ```bash
+   export PATH="/opt/homebrew/opt/wxwidgets/bin:$PATH"
+   ```
+
+   - Windows
+
+   ```powershell
+   git clone https://github.com/microsoft/vcpkg.git
+   cd vcpkg
+   .\bootstrap-vcpkg.bat
+   .\vcpkg install wxwidgets:x64-windows
+   ```
+
+   Then configure CMake to use vcpkg:
+
+   ```powershell
+   cmake .. -DCMAKE_TOOLCHAIN_FILE=path\to\vcpkg\scripts\buildsystems\vcpkg.cmake
+   ```
+   
+
+3. **Build the project:**
    ```bash
    mkdir build
    cd build
@@ -44,7 +81,7 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
    cmake --build .
    ```
 
-3. **Run the program**
+4. **Run the program**
    ```bash
    ./k_means_image_compression
    ```
