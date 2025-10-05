@@ -57,7 +57,7 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
    ![Compress Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/single%20image%20example.png?raw=true)
 
-<br><br>
+<br>
 
 2. Save any compressed images that you want to keep in a `.PNG` or custom `.DAT` format  
    (the `.DAT` file can only be opened using the display option of the program)  
