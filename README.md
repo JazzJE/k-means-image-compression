@@ -55,7 +55,7 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
 
 <br>
 
-   ![Compress Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/single%20compress%20image.png)
+   ![Compress Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/single%20image%20example.png?raw=true)
 
 <br><br>
 
@@ -64,14 +64,14 @@ __If not found, both OpenMP and wxWidgets will be fetched and built from source.
   
 <br>
 
-   ![Display Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/display%20image.png)
+   ![Display Image](https://github.com/JazzJE/k-means-image-compression/blob/main/assets/display%20example.png?raw=true)
 
 # Example
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/JazzJE/k-means-image-compression/main/example%20assets/original%20image.jpg"
+  <img src="https://github.com/JazzJE/k-means-image-compression/blob/main/assets/original%20image.jpg?raw=true"
        width="45%" alt="Original Image (3.78 MB)">
-  <img src="https://raw.githubusercontent.com/JazzJE/k-means-image-compression/main/example%20assets/transformed%20image.png"
+  <img src="https://github.com/JazzJE/k-means-image-compression/blob/main/assets/transformed%20image.png?raw=true"
        width="45%" alt="Compressed Image (2.55 MB)">
 </p>
 
