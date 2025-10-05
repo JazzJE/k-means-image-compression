@@ -14,7 +14,7 @@ An implementation of K-means clustering for image compression using C++ and no e
 
 - K-means++ initialization for better clustering
 - Customizable number of clusters using a spin control
-- Image loading and saving with custom .dat formats that drastically reduce file size
+- Image loading and saving with custom .dat formats that displays color metadata
 - Simple GUI design with wxWidgets for real-time compression, interaction and visualization
 
 # Setup
